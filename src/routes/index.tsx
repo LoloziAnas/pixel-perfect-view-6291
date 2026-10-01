@@ -32,7 +32,7 @@ const wa = (msg: string) => `https://wa.me/${PHONE}?text=${encodeURIComponent(ms
 
 type Lang = "fr" | "ar";
 
-const products = [
+const products: { img: string; price: number; fr: [string, string]; ar: [string, string] }[] = [
   { img: p1, price: 890, fr: ["Velours Ivoire", "Velours doux bordé d'un galon doré."], ar: ["مخمل عاجي", "مخمل ناعم بحواف ذهبية."] },
   { img: p2, price: 650, fr: ["Matelassé Rose", "Coton matelassé, set avec taies."], ar: ["مبطّن وردي", "قطن مبطّن مع أكياس وسائد."] },
   { img: p3, price: 990, fr: ["Brodé Fès", "Coton ivoire brodé de fil doré."], ar: ["مطرّز فاس", "قطن عاجي مطرّز بخيط ذهبي."] },
@@ -41,7 +41,7 @@ const products = [
   { img: about, price: 1150, fr: ["Terracotta Soirée", "Jeté chenille et parure assortie."], ar: ["تيراكوتا المساء", "غطاء شينيل مع طقم متناسق."] },
 ];
 
-const t = {
+const t: Record<Lang, { nav: string[]; trust: string[]; fabHl: [string, string][]; reviews: [string, string, string][]; orderMsg: (n: string) => string; [k: string]: any }> = {
   fr: {
     nav: ["Collections", "À propos", "Avis", "Contact"],
     heroTitle: "La douceur, chez vous",
