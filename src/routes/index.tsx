@@ -268,8 +268,8 @@ function Index() {
               {[Feather, Leaf, Droplets].map((Icon, i) => (
                 <div key={i}>
                   <Icon className="h-6 w-6 text-gold" strokeWidth={1.25} />
-                  <h4 className="mt-3 text-lg text-ink">{c.fabHl[i][0]}</h4>
-                  <p className="mt-1 text-sm text-muted-foreground">{c.fabHl[i][1]}</p>
+                  <h4 className="mt-3 text-lg text-ink">{c.fabHl[i]?.[0]}</h4>
+                  <p className="mt-1 text-sm text-muted-foreground">{c.fabHl[i]?.[1]}</p>
                 </div>
               ))}
             </div>
