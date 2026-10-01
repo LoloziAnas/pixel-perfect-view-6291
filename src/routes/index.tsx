@@ -41,7 +41,7 @@ const products: { img: string; price: number; fr: [string, string]; ar: [string,
   { img: about, price: 1150, fr: ["Terracotta Soirée", "Jeté chenille et parure assortie."], ar: ["تيراكوتا المساء", "غطاء شينيل مع طقم متناسق."] },
 ];
 
-const t: Record<Lang, { nav: string[]; trust: string[]; fabHl: [string, string][]; reviews: [string, string, string][]; orderMsg: (n: string) => string; [k: string]: any }> = {
+const t: Record<Lang, { nav: string[]; trust: string[]; fabHl: [string, string][]; reviews: [string, string, string][]; orderMsg: (n: string) => string; }>  [k: string]: any }> = { Record<Lang, Record<"heroTitle"|"heroSub"|"discover"|"orderWa"|"collTag"|"collTitle"|"order"|"mad"|"fabTag"|"fabTitle"|"fabText"|"aboutTag"|"aboutTitle"|"aboutText"|"revTag"|"revTitle"|"instaTitle"|"follow"|"ctaTitle"|"ctaSub"|"footTag"|"city"|"rights"|"defaultMsg", string>> = {
   fr: {
     nav: ["Collections", "À propos", "Avis", "Contact"],
     heroTitle: "La douceur, chez vous",
