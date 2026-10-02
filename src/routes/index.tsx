@@ -123,7 +123,7 @@ function TkIcon({ className = "h-5 w-5" }: { className?: string }) {
   );
 }
 
-function Logo({ size = 48 }: { size?: number }) {
+function Logo({ size = 72 }: { size?: number }) {
   return (
     <a href="#top" className="flex items-center gap-3" aria-label="NOAUMA — Accueil">
       <img
@@ -349,7 +349,7 @@ function Index() {
       <footer id="contact" className="scroll-mt-20 bg-ink text-cream">
         <div className="mx-auto grid max-w-7xl gap-10 px-5 py-16 md:grid-cols-3">
           <div>
-            <Logo size={64} />
+            <Logo size={96} />
             <p className="mt-4 max-w-xs text-sm text-cream/70">{c.footTag}</p>
           </div>
           <ul className="space-y-3 text-sm text-cream/80">
