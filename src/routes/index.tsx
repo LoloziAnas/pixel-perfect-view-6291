@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Truck, Banknote, Gem, RefreshCw, Feather, Leaf, Droplets, Star, Mail, Phone, MapPin, Menu, X } from "lucide-react";
+import { Truck, Banknote, Gem, RefreshCw, Feather, Leaf, Droplets, Star, Mail, Phone, MapPin, Menu, X, ArrowRight, ChevronDown } from "lucide-react";
 import hero from "@/assets/hero.jpg";
 import fabric from "@/assets/fabric.jpg";
 import about from "@/assets/about.jpg";
@@ -42,11 +42,13 @@ const products: { img: string; price: number; fr: [string, string]; ar: [string,
   { img: about, price: 1150, fr: ["Terracotta Soirée", "Jeté chenille et parure assortie."], ar: ["تيراكوتا المساء", "غطاء شينيل مع طقم متناسق."] },
 ];
 
-type Dict = { nav: string[]; trust: string[]; fabHl: [string, string][]; reviews: [string, string, string][]; orderMsg: (n: string) => string } & Record<"heroTitle"|"heroSub"|"discover"|"orderWa"|"collTag"|"collTitle"|"order"|"mad"|"fabTag"|"fabTitle"|"fabText"|"aboutTag"|"aboutTitle"|"aboutText"|"revTag"|"revTitle"|"instaTitle"|"follow"|"ctaTitle"|"ctaSub"|"footTag"|"city"|"rights"|"defaultMsg", string>;
+type Dict = { nav: string[]; trust: string[]; fabHl: [string, string][]; reviews: [string, string, string][]; orderMsg: (n: string) => string } & Record<"heroEyebrow"|"heroTitle"|"heroTitleAlt"|"heroSub"|"discover"|"orderWa"|"collTag"|"collTitle"|"order"|"mad"|"fabTag"|"fabTitle"|"fabText"|"aboutTag"|"aboutTitle"|"aboutText"|"revTag"|"revTitle"|"instaTitle"|"follow"|"ctaTitle"|"ctaSub"|"footTag"|"city"|"rights"|"defaultMsg", string>;
 const t: Record<Lang, Dict> = {
   fr: {
     nav: ["Collections", "À propos", "Avis", "Contact"],
-    heroTitle: "La douceur, chez vous",
+    heroEyebrow: "L’art du linge de lit",
+    heroTitle: "Élégance",
+    heroTitleAlt: "Confort · Raffinement",
     heroSub: "Des couvre-lits premium, doux et élégants, pensés pour les maisons marocaines.",
     discover: "Découvrir la collection",
     orderWa: "Commander sur WhatsApp",
@@ -69,7 +71,9 @@ const t: Record<Lang, Dict> = {
   },
   ar: {
     nav: ["المجموعات", "من نحن", "الآراء", "اتصل بنا"],
-    heroTitle: "النعومة في بيتك",
+    heroEyebrow: "فنّ مفروشات السرير",
+    heroTitle: "أناقة",
+    heroTitleAlt: "راحة · رُقيّ",
     heroSub: "أغطية أسرّة فاخرة، ناعمة وأنيقة، مصمّمة للبيوت المغربية.",
     discover: "اكتشفي المجموعة",
     orderWa: "اطلبي عبر واتساب",
@@ -123,9 +127,9 @@ function TkIcon({ className = "h-5 w-5" }: { className?: string }) {
   );
 }
 
-function Logo({ size = 72 }: { size?: number }) {
+function Logo({ size = 72, className = "" }: { size?: number; className?: string }) {
   return (
-    <a href="#top" className="flex items-center gap-3" aria-label="NOAUMA — Accueil">
+    <a href="#top" className={`flex items-center gap-3 ${className}`} aria-label="NOAUMA — Accueil">
       <img
         src={logo}
         alt="Logo NOAUMA"
@@ -173,18 +177,19 @@ function Index() {
   return (
     <div id="top" className="min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4">
-          <Logo />
-          <nav className="hidden items-center gap-8 md:flex">
+      <header className="relative z-40 h-[76px] border-b border-gold/15 bg-background/95 md:h-[98px]">
+        <div className="mx-auto flex h-full max-w-[1440px] items-center justify-between gap-4 px-5 md:px-12">
+          <nav className="hidden items-center gap-9 md:flex">
             {c.nav.map((n, i) => (
-              <a key={n} href={`#${ids[i]}`} className="text-sm tracking-wide text-ink/80 transition-colors hover:text-rose-deep">{n}</a>
+              <a key={n} href={`#${ids[i]}`} className="text-[0.68rem] uppercase tracking-[0.16em] text-ink/65 transition-colors hover:text-rose-deep">{n}</a>
             ))}
           </nav>
+          <Logo size={154} className="absolute left-1/2 top-2 z-20 -translate-x-1/2 max-md:hidden" />
+          <Logo size={72} className="md:hidden" />
           <div className="flex shrink-0 items-center gap-2">
             <button
               onClick={() => setLang(lang === "fr" ? "ar" : "fr")}
-              className="rounded-full border border-gold/60 px-3 py-1.5 text-xs tracking-widest text-ink transition-colors hover:bg-cream"
+              className="rounded-full border border-gold/50 px-3 py-1.5 text-[0.62rem] tracking-widest text-ink transition-colors hover:bg-cream"
               aria-label="Changer de langue / تغيير اللغة"
             >
               {lang === "fr" ? "العربية" : "FR"}
@@ -207,31 +212,40 @@ function Index() {
       </header>
 
       {/* Hero */}
-      <section className="relative h-[88vh] min-h-[560px] w-full overflow-hidden">
-        <img src={hero} alt="Lit élégant habillé d'un couvre-lit rose NOAUMA" width={1600} height={1008} className="absolute inset-0 h-full w-full object-cover" />
-        <div className="absolute inset-0 bg-veil" />
-        <div className="relative z-10 mx-auto flex h-full max-w-7xl flex-col items-center justify-end px-6 pb-20 text-center text-primary-foreground md:justify-center md:pb-0">
-          <span className="reveal text-xs uppercase tracking-[0.4em] text-cream">Kenitra · Maroc</span>
-          <h1 className="reveal mt-4 max-w-3xl text-5xl leading-[1.05] md:text-7xl">{c.heroTitle}</h1>
-          <div className="gold-line reveal mt-6" />
-          <p className="reveal mt-6 max-w-lg text-base font-light text-cream md:text-lg">{c.heroSub}</p>
-          <div className="reveal mt-9 flex w-full max-w-md flex-col gap-3 sm:w-auto sm:max-w-none sm:flex-row">
-            <a href="#collections" className="btn-primary">{c.discover}</a>
-            <a href={wa(c.defaultMsg)} target="_blank" rel="noopener noreferrer" className="btn-ghost"><WaIcon className="h-4 w-4" />{c.orderWa}</a>
+      <section className="hero-reference relative min-h-[calc(100svh-76px)] w-full overflow-hidden md:min-h-[690px] md:h-[calc(100vh-98px)]">
+        <img src={hero} alt="Lit élégant habillé d'un couvre-lit rose NOAUMA" width={1600} height={1008} className="absolute inset-0 h-full w-full object-cover object-[58%_center] md:object-center" />
+        <div className="hero-reference-veil absolute inset-0" />
+        <div className="relative z-10 mx-auto flex min-h-[calc(100svh-76px)] max-w-[1440px] flex-col justify-center px-6 pb-44 pt-20 md:h-full md:min-h-[690px] md:px-12 md:pb-36 md:pt-16 lg:px-24">
+          <div className="max-w-[650px] text-primary-foreground md:text-ink">
+            <div className="reveal flex items-center gap-5">
+              <span className="text-[0.64rem] uppercase tracking-[0.36em] md:text-xs">{c.heroEyebrow}</span>
+              <span className="h-px w-14 bg-current opacity-35" />
+            </div>
+            <h1 className="reveal mt-7 text-[3.4rem] leading-[0.92] md:text-[5.5rem] lg:text-[6.5rem]">
+              <span className="block">{c.heroTitle}</span>
+              <span className="mt-2 block text-[0.76em] font-normal">{c.heroTitleAlt}</span>
+            </h1>
+            <p className="reveal mt-7 max-w-md text-sm font-light leading-relaxed opacity-85 md:text-base">{c.heroSub}</p>
+            <div className="reveal mt-9 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
+              <a href="#collections" className="hero-cta">{c.discover}<ArrowRight className="h-4 w-4" /></a>
+              <a href={wa(c.defaultMsg)} target="_blank" rel="noopener noreferrer" className="hero-wa"><WaIcon className="h-4 w-4" />{c.orderWa}</a>
+            </div>
           </div>
         </div>
-      </section>
 
-      {/* Trust bar */}
-      <section className="fabric border-y border-gold/30">
-        <div className="mx-auto grid max-w-6xl grid-cols-2 gap-6 px-5 py-8 md:grid-cols-4">
+        <div className="hero-trust absolute inset-x-0 bottom-0 z-20">
+          <div className="mx-auto grid max-w-[1440px] grid-cols-2 gap-x-4 gap-y-5 px-6 pb-7 pt-12 md:grid-cols-4 md:px-12 md:pb-9 lg:px-24">
           {[Truck, Banknote, Gem, RefreshCw].map((Icon, i) => (
-            <div key={i} className="flex flex-col items-center gap-2 text-center">
-              <Icon className="h-6 w-6 text-gold" strokeWidth={1.25} />
-              <span className="text-xs tracking-wide text-ink md:text-sm">{c.trust[i]}</span>
+            <div key={i} className="flex items-center gap-3 border-r border-gold/20 last:border-r-0 max-md:even:border-r-0">
+              <Icon className="h-6 w-6 shrink-0 text-gold" strokeWidth={1.1} />
+              <span className="text-[0.58rem] uppercase leading-relaxed tracking-[0.1em] text-ink/70 md:text-[0.65rem]">{c.trust[i]}</span>
             </div>
           ))}
+          </div>
         </div>
+        <a href="#collections" aria-label={c.discover} className="absolute bottom-3 left-1/2 z-30 hidden h-10 w-7 -translate-x-1/2 place-items-center rounded-full border border-gold/40 text-gold md:grid">
+          <ChevronDown className="h-4 w-4" />
+        </a>
       </section>
 
       {/* Collection */}
