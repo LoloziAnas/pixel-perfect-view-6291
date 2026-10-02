@@ -42,13 +42,13 @@
 }
 
 :root {
-  --radius: 1rem;
-  --rose: oklch(0.7 0.06 35);          /* #C9958A */
-  --rose-deep: oklch(0.58 0.075 28);   /* #A86B63 */
-  --gold: oklch(0.73 0.09 80);         /* #C9A25E */
-  --cream: oklch(0.92 0.022 70);       /* #EFE4D6 */
-  --ink: oklch(0.3 0.015 35);          /* #3A2E2B */
-  --background: oklch(0.985 0.006 70);
+  --radius: .5rem;
+  --rose: oklch(0.72 0.055 35);
+  --rose-deep: oklch(0.57 0.07 30);
+  --gold: oklch(0.72 0.085 75);
+  --cream: oklch(0.94 0.019 62);
+  --ink: oklch(0.27 0.025 35);
+  --background: oklch(0.985 0.007 55);
   --foreground: var(--ink);
   --card: oklch(1 0 0);
   --card-foreground: var(--ink);
@@ -68,7 +68,7 @@
   --input: oklch(0.88 0.025 60);
   --ring: var(--gold);
   --shadow-soft: 0 20px 50px -25px color-mix(in oklab, var(--rose-deep) 35%, transparent);
-  --gradient-veil: linear-gradient(180deg, color-mix(in oklab, var(--ink) 15%, transparent), color-mix(in oklab, var(--ink) 55%, transparent));
+  --gradient-veil: linear-gradient(180deg, color-mix(in oklab, var(--ink) 10%, transparent), color-mix(in oklab, var(--ink) 55%, transparent));
 }
 
 @layer base {
@@ -100,6 +100,37 @@
 
 @utility shadow-soft { box-shadow: var(--shadow-soft); }
 @utility bg-veil { background: var(--gradient-veil); }
+
+@utility hero-cta {
+  display: inline-flex; align-items: center; justify-content: center; gap: .8rem;
+  min-height: 3.15rem; border: 1px solid color-mix(in oklab, var(--cream) 70%, transparent);
+  border-radius: 9999px; padding: .85rem 1.65rem;
+  color: var(--primary-foreground); background: color-mix(in oklab, var(--rose-deep) 88%, transparent);
+  font-size: .66rem; letter-spacing: .15em; text-transform: uppercase;
+  transition: background .35s ease, transform .35s ease;
+  &:hover { background: var(--rose-deep); transform: translateY(-2px); }
+}
+
+@utility hero-wa {
+  display: inline-flex; align-items: center; gap: .55rem; padding: .8rem 1rem;
+  color: currentColor; font-size: .62rem; letter-spacing: .13em; text-transform: uppercase;
+  opacity: .8; transition: opacity .3s ease;
+  &:hover { opacity: 1; }
+}
+
+.hero-reference-veil {
+  background: linear-gradient(180deg, color-mix(in oklab, var(--ink) 4%, transparent) 15%, color-mix(in oklab, var(--ink) 62%, transparent) 100%);
+}
+.hero-trust {
+  background: linear-gradient(0deg, var(--background) 12%, color-mix(in oklab, var(--background) 90%, transparent) 64%, transparent 100%);
+}
+@media (min-width: 768px) {
+  .hero-reference-veil {
+    background: linear-gradient(90deg, color-mix(in oklab, var(--cream) 96%, transparent) 0%, color-mix(in oklab, var(--cream) 78%, transparent) 28%, color-mix(in oklab, var(--cream) 12%, transparent) 58%, transparent 76%);
+  }
+  .hero-cta { color: var(--primary-foreground); }
+  .hero-trust { background: linear-gradient(0deg, var(--background) 8%, color-mix(in oklab, var(--background) 78%, transparent) 52%, transparent 100%); }
+}
 
 @utility btn-primary {
   display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
