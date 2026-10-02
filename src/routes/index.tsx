@@ -9,6 +9,7 @@ import p2 from "@/assets/p2.jpg";
 import p3 from "@/assets/p3.jpg";
 import p4 from "@/assets/p4.jpg";
 import p5 from "@/assets/p5.jpg";
+import logo from "@/assets/logo.png";
 
 const TITLE = "NOAUMA — La douceur, chez vous | Linge de lit premium, Kenitra";
 const DESC = "Couvre-lits et parures premium pour les maisons marocaines. Livraison partout au Maroc, paiement à la livraison.";
@@ -122,11 +123,18 @@ function TkIcon({ className = "h-5 w-5" }: { className?: string }) {
   );
 }
 
-function Logo({ lang }: { lang: Lang }) {
+function Logo({ size = 48 }: { size?: number }) {
   return (
-    <a href="#top" className="flex flex-col items-start leading-none" aria-label="NOAUMA">
-      <span className="font-serif text-2xl tracking-[0.3em] text-ink">NOAUMA</span>
-      <span className="font-arabic text-sm text-gold">{lang === "fr" ? "نعومة" : "Noauma"}</span>
+    <a href="#top" className="flex items-center gap-3" aria-label="NOAUMA — Accueil">
+      <img
+        src={logo}
+        alt="Logo NOAUMA"
+        width={size}
+        height={size}
+        className="rounded-full object-contain"
+        style={{ width: size, height: size }}
+      />
+      <span className="sr-only">NOAUMA — نعومة</span>
     </a>
   );
 }
@@ -167,7 +175,7 @@ function Index() {
       {/* Header */}
       <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4">
-          <Logo lang={lang} />
+          <Logo />
           <nav className="hidden items-center gap-8 md:flex">
             {c.nav.map((n, i) => (
               <a key={n} href={`#${ids[i]}`} className="text-sm tracking-wide text-ink/80 transition-colors hover:text-rose-deep">{n}</a>
@@ -341,8 +349,7 @@ function Index() {
       <footer id="contact" className="scroll-mt-20 bg-ink text-cream">
         <div className="mx-auto grid max-w-7xl gap-10 px-5 py-16 md:grid-cols-3">
           <div>
-            <p className="font-serif text-3xl tracking-[0.3em]">NOAUMA</p>
-            <p className="font-arabic text-gold">نعومة</p>
+            <Logo size={64} />
             <p className="mt-4 max-w-xs text-sm text-cream/70">{c.footTag}</p>
           </div>
           <ul className="space-y-3 text-sm text-cream/80">
