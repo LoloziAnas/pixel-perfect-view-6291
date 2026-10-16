@@ -4,7 +4,7 @@ import { Truck, Banknote, Gem, RefreshCw, Feather, Leaf, Droplets, Star, Mail, P
 import hero from "@/assets/hero.jpg";
 import fabric from "@/assets/fabric.jpg";
 import about from "@/assets/about.jpg";
-import { products, PHONE, wa } from "@/lib/products";
+import { products, wa } from "@/lib/products";
 import logo from "@/assets/logo.png";
 
 const TITLE = "NOAUMA — La douceur, chez vous | Linge de lit premium, Kenitra";
@@ -244,13 +244,13 @@ function Index() {
                   <img src={p.img} alt={name} loading="lazy" width={800} height={1008} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
                 </div>
                 <div className="flex flex-1 flex-col p-3 md:p-6">
-                  <h3 className="text-xl text-ink md:text-2xl">{name}</h3>
+                  <h3 className="text-xl text-ink md:text-2xl"><Link to="/produit/$slug" params={{ slug: p.slug }}>{name}</Link></h3>
                   <p className="mt-1 text-xs text-muted-foreground md:text-sm">{desc}</p>
                   <div className="mt-auto flex flex-col gap-3 pt-4 md:flex-row md:items-center md:justify-between">
                     <span className="font-serif text-lg text-rose-deep">{p.price} {c.mad}</span>
-                    <a href={wa(c.orderMsg(name))} target="_blank" rel="noopener noreferrer" className="btn-primary !px-4 !py-2.5 !text-[0.7rem]">
-                      <WaIcon className="h-3.5 w-3.5" />{c.order}
-                    </a>
+                    <Link to="/produit/$slug" params={{ slug: p.slug }} className="btn-primary !px-4 !py-2.5 !text-[0.7rem]">
+                      {c.order}
+                    </Link>
                   </div>
                 </div>
               </article>
