@@ -5,6 +5,7 @@ import hero from "@/assets/hero.jpg";
 import fabric from "@/assets/fabric.jpg";
 import about from "@/assets/about.jpg";
 import { products, wa } from "@/lib/products";
+const [p1, p2, p3, , p5] = products.map((x) => x.img);
 import logo from "@/assets/logo.png";
 
 const TITLE = "NOAUMA — La douceur, chez vous | Linge de lit premium, Kenitra";
