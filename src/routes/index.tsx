@@ -5,7 +5,6 @@ import hero from "@/assets/hero.jpg";
 import fabric from "@/assets/fabric.jpg";
 import about from "@/assets/about.jpg";
 import { products, wa } from "@/lib/products";
-const [p1, p2, p3, , p5] = products.map((x) => x.img);
 import logo from "@/assets/logo.png";
 
 const TITLE = "NOAUMA — La douceur, chez vous | Linge de lit premium, Kenitra";
@@ -157,7 +156,8 @@ function Index() {
     return () => io.disconnect();
   }, []);
 
-  const gallery = [p2, fabric, p3, about, p5, p1];
+  const img = (i: number) => products[i]?.img ?? about;
+  const gallery = [img(1), fabric, img(2), about, img(4), img(0)];
 
   return (
     <div id="top" className="min-h-screen bg-background">
