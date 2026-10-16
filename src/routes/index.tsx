@@ -28,7 +28,7 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-const PHONE = "212650074748";
+const PHONE = "212674427340";
 const wa = (msg: string) => `https://wa.me/${PHONE}?text=${encodeURIComponent(msg)}`;
 
 type Lang = "fr" | "ar";
@@ -367,7 +367,7 @@ function Index() {
             <p className="mt-4 max-w-xs text-sm text-cream/70">{c.footTag}</p>
           </div>
           <ul className="space-y-3 text-sm text-cream/80">
-            <li><a href="tel:+212650074748" className="flex items-center gap-3 hover:text-gold"><Phone className="h-4 w-4 text-gold" /><span dir="ltr">+212 6 50 07 47 48</span></a></li>
+            <li><a href="tel:+212674427340" className="flex items-center gap-3 hover:text-gold"><Phone className="h-4 w-4 text-gold" /><span dir="ltr">+212 6 74 42 73 40</span></a></li>
             <li><a href={wa(c.defaultMsg)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 hover:text-gold"><WaIcon className="h-4 w-4 text-gold" />WhatsApp</a></li>
             <li><a href="mailto:contact@noauma.ma" className="flex items-center gap-3 hover:text-gold"><Mail className="h-4 w-4 text-gold" />contact@noauma.ma</a></li>
             <li className="flex items-center gap-3"><MapPin className="h-4 w-4 text-gold" />{c.city}</li>
