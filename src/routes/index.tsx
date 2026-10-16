@@ -369,7 +369,7 @@ function Index() {
           <ul className="space-y-3 text-sm text-cream/80">
             <li><a href="tel:+212674427340" className="flex items-center gap-3 hover:text-gold"><Phone className="h-4 w-4 text-gold" /><span dir="ltr">+212 6 74 42 73 40</span></a></li>
             <li><a href={wa(c.defaultMsg)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 hover:text-gold"><WaIcon className="h-4 w-4 text-gold" />WhatsApp</a></li>
-            <li><a href="mailto:contact@noauma.ma" className="flex items-center gap-3 hover:text-gold"><Mail className="h-4 w-4 text-gold" />contact@noauma.ma</a></li>
+            <li><a href="mailto:contact.noauma@gmail.com" className="flex items-center gap-3 hover:text-gold"><Mail className="h-4 w-4 text-gold" />contact.noauma@gmail.com</a></li>
             <li className="flex items-center gap-3"><MapPin className="h-4 w-4 text-gold" />{c.city}</li>
           </ul>
           <div className="flex gap-3 md:justify-end">
