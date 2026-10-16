@@ -1,14 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Truck, Banknote, Gem, RefreshCw, Feather, Leaf, Droplets, Star, Mail, Phone, MapPin, Menu, X, ArrowRight, ChevronDown } from "lucide-react";
 import hero from "@/assets/hero.jpg";
 import fabric from "@/assets/fabric.jpg";
 import about from "@/assets/about.jpg";
-import p1 from "@/assets/p1.jpg";
-import p2 from "@/assets/p2.jpg";
-import p3 from "@/assets/p3.jpg";
-import p4 from "@/assets/p4.jpg";
-import p5 from "@/assets/p5.jpg";
+import { products, PHONE, wa } from "@/lib/products";
 import logo from "@/assets/logo.png";
 
 const TITLE = "NOAUMA — La douceur, chez vous | Linge de lit premium, Kenitra";
@@ -28,19 +24,7 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-const PHONE = "212674427340";
-const wa = (msg: string) => `https://wa.me/${PHONE}?text=${encodeURIComponent(msg)}`;
-
 type Lang = "fr" | "ar";
-
-const products: { img: string; price: number; fr: [string, string]; ar: [string, string] }[] = [
-  { img: p1, price: 890, fr: ["Velours Ivoire", "Velours doux bordé d'un galon doré."], ar: ["مخمل عاجي", "مخمل ناعم بحواف ذهبية."] },
-  { img: p2, price: 650, fr: ["Matelassé Rose", "Coton matelassé, set avec taies."], ar: ["مبطّن وردي", "قطن مبطّن مع أكياس وسائد."] },
-  { img: p3, price: 990, fr: ["Brodé Fès", "Coton ivoire brodé de fil doré."], ar: ["مطرّز فاس", "قطن عاجي مطرّز بخيط ذهبي."] },
-  { img: p4, price: 780, fr: ["Lin Sable", "Parure en lin lavé, toucher naturel."], ar: ["كتان رملي", "طقم كتان مغسول بلمسة طبيعية."] },
-  { img: p5, price: 420, fr: ["Plaid Nuage", "Polaire sherpa ultra douce."], ar: ["بطانية غيمة", "صوف شيربا فائق النعومة."] },
-  { img: about, price: 1150, fr: ["Terracotta Soirée", "Jeté chenille et parure assortie."], ar: ["تيراكوتا المساء", "غطاء شينيل مع طقم متناسق."] },
-];
 
 type Dict = { nav: string[]; trust: string[]; fabHl: [string, string][]; reviews: [string, string, string][]; orderMsg: (n: string) => string } & Record<"heroEyebrow"|"heroTitle"|"heroTitleAlt"|"heroSub"|"discover"|"orderWa"|"collTag"|"collTitle"|"order"|"mad"|"fabTag"|"fabTitle"|"fabText"|"aboutTag"|"aboutTitle"|"aboutText"|"revTag"|"revTitle"|"instaTitle"|"follow"|"ctaTitle"|"ctaSub"|"footTag"|"city"|"rights"|"defaultMsg", string>;
 const t: Record<Lang, Dict> = {
