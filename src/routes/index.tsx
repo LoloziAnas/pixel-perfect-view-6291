@@ -1,14 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Truck, Banknote, Gem, RefreshCw, Feather, Leaf, Droplets, Star, Mail, Phone, MapPin, Menu, X, ArrowRight, ChevronDown } from "lucide-react";
 import hero from "@/assets/hero.jpg";
 import fabric from "@/assets/fabric.jpg";
 import about from "@/assets/about.jpg";
-import p1 from "@/assets/p1.jpg";
-import p2 from "@/assets/p2.jpg";
-import p3 from "@/assets/p3.jpg";
-import p4 from "@/assets/p4.jpg";
-import p5 from "@/assets/p5.jpg";
+import { products, wa } from "@/lib/products";
 import logo from "@/assets/logo.png";
 
 const TITLE = "NOAUMA — La douceur, chez vous | Linge de lit premium, Kenitra";
@@ -28,19 +24,7 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-const PHONE = "212674427340";
-const wa = (msg: string) => `https://wa.me/${PHONE}?text=${encodeURIComponent(msg)}`;
-
 type Lang = "fr" | "ar";
-
-const products: { img: string; price: number; fr: [string, string]; ar: [string, string] }[] = [
-  { img: p1, price: 890, fr: ["Velours Ivoire", "Velours doux bordé d'un galon doré."], ar: ["مخمل عاجي", "مخمل ناعم بحواف ذهبية."] },
-  { img: p2, price: 650, fr: ["Matelassé Rose", "Coton matelassé, set avec taies."], ar: ["مبطّن وردي", "قطن مبطّن مع أكياس وسائد."] },
-  { img: p3, price: 990, fr: ["Brodé Fès", "Coton ivoire brodé de fil doré."], ar: ["مطرّز فاس", "قطن عاجي مطرّز بخيط ذهبي."] },
-  { img: p4, price: 780, fr: ["Lin Sable", "Parure en lin lavé, toucher naturel."], ar: ["كتان رملي", "طقم كتان مغسول بلمسة طبيعية."] },
-  { img: p5, price: 420, fr: ["Plaid Nuage", "Polaire sherpa ultra douce."], ar: ["بطانية غيمة", "صوف شيربا فائق النعومة."] },
-  { img: about, price: 1150, fr: ["Terracotta Soirée", "Jeté chenille et parure assortie."], ar: ["تيراكوتا المساء", "غطاء شينيل مع طقم متناسق."] },
-];
 
 type Dict = { nav: string[]; trust: string[]; fabHl: [string, string][]; reviews: [string, string, string][]; orderMsg: (n: string) => string } & Record<"heroEyebrow"|"heroTitle"|"heroTitleAlt"|"heroSub"|"discover"|"orderWa"|"collTag"|"collTitle"|"order"|"mad"|"fabTag"|"fabTitle"|"fabText"|"aboutTag"|"aboutTitle"|"aboutText"|"revTag"|"revTitle"|"instaTitle"|"follow"|"ctaTitle"|"ctaSub"|"footTag"|"city"|"rights"|"defaultMsg", string>;
 const t: Record<Lang, Dict> = {
@@ -172,7 +156,8 @@ function Index() {
     return () => io.disconnect();
   }, []);
 
-  const gallery = [p2, fabric, p3, about, p5, p1];
+  const img = (i: number) => products[i]?.img ?? about;
+  const gallery = [img(1), fabric, img(2), about, img(4), img(0)];
 
   return (
     <div id="top" className="min-h-screen bg-background">
@@ -260,13 +245,13 @@ function Index() {
                   <img src={p.img} alt={name} loading="lazy" width={800} height={1008} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
                 </div>
                 <div className="flex flex-1 flex-col p-3 md:p-6">
-                  <h3 className="text-xl text-ink md:text-2xl">{name}</h3>
+                  <h3 className="text-xl text-ink md:text-2xl"><Link to="/produit/$slug" params={{ slug: p.slug }}>{name}</Link></h3>
                   <p className="mt-1 text-xs text-muted-foreground md:text-sm">{desc}</p>
                   <div className="mt-auto flex flex-col gap-3 pt-4 md:flex-row md:items-center md:justify-between">
                     <span className="font-serif text-lg text-rose-deep">{p.price} {c.mad}</span>
-                    <a href={wa(c.orderMsg(name))} target="_blank" rel="noopener noreferrer" className="btn-primary !px-4 !py-2.5 !text-[0.7rem]">
-                      <WaIcon className="h-3.5 w-3.5" />{c.order}
-                    </a>
+                    <Link to="/produit/$slug" params={{ slug: p.slug }} className="btn-primary !px-4 !py-2.5 !text-[0.7rem]">
+                      {c.order}
+                    </Link>
                   </div>
                 </div>
               </article>
