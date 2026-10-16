@@ -336,13 +336,13 @@ function Index() {
         <SectionHead tag="@noauma" title={c.instaTitle} />
         <div className="grid grid-cols-3 gap-2 md:gap-4">
           {gallery.map((g, i) => (
-            <a key={i} href="https://instagram.com/" target="_blank" rel="noopener noreferrer" className="reveal group relative block aspect-square overflow-hidden rounded-xl">
+            <a key={i} href="https://www.instagram.com/noauma.ma" target="_blank" rel="noopener noreferrer" className="reveal group relative block aspect-square overflow-hidden rounded-xl">
               <img src={g} alt="Instagram NOAUMA" loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
             </a>
           ))}
         </div>
         <div className="mt-10 flex justify-center">
-          <a href="https://instagram.com/" target="_blank" rel="noopener noreferrer" className="btn-primary"><IgIcon className="h-4 w-4" />{c.follow}</a>
+          <a href="https://www.instagram.com/noauma.ma" target="_blank" rel="noopener noreferrer" className="btn-primary"><IgIcon className="h-4 w-4" />{c.follow}</a>
         </div>
       </section>
 
@@ -373,7 +373,7 @@ function Index() {
             <li className="flex items-center gap-3"><MapPin className="h-4 w-4 text-gold" />{c.city}</li>
           </ul>
           <div className="flex gap-3 md:justify-end">
-            {[[IgIcon, "Instagram", "https://instagram.com/"], [FbIcon, "Facebook", "https://facebook.com/"], [TkIcon, "TikTok", "https://tiktok.com/"]].map(([Icon, label, href]) => {
+            {[[IgIcon, "Instagram", "https://www.instagram.com/noauma.ma"], [FbIcon, "Facebook", "https://www.facebook.com/noauma.ma"], [TkIcon, "TikTok", "https://www.tiktok.com/@noauma.ma"]].map(([Icon, label, href]) => {
               const I = Icon as typeof IgIcon;
               return (
                 <a key={label as string} href={href as string} target="_blank" rel="noopener noreferrer" aria-label={label as string} className="grid h-10 w-10 place-items-center rounded-full border border-gold/40 text-gold transition-colors hover:bg-gold/10">
