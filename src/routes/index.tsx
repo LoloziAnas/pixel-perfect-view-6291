@@ -21,7 +21,7 @@ import {
 import hero from "@/assets/hero.jpg";
 import fabric from "@/assets/fabric.jpg";
 import about from "@/assets/about.jpg";
-import { hasPriceRange, minPrice, products, wa } from "@/lib/products";
+import { products, wa } from "@/lib/products";
 import logo from "@/assets/logo.webp";
 import { useLang, type Lang } from "@/lib/lang";
 import { CartButton, LangToggle } from "@/components/shop";
@@ -62,7 +62,6 @@ type Dict = {
   | "collTitle"
   | "order"
   | "mad"
-  | "from"
   | "fabTag"
   | "fabTitle"
   | "fabText"
@@ -99,7 +98,6 @@ const t: Record<Lang, Dict> = {
     collTag: "Collection",
     collTitle: "Nos pièces signature",
     order: "Voir",
-    from: "Dès",
     mad: "MAD",
     orderMsg: (n: string) => `Bonjour NOAUMA, je souhaite commander : ${n}`,
     fabTag: "Matières",
@@ -152,7 +150,6 @@ const t: Record<Lang, Dict> = {
     collTag: "المجموعة",
     collTitle: "قطعنا المميزة",
     order: "اكتشفي",
-    from: "ابتداءً من",
     mad: "درهم",
     orderMsg: (n: string) => `مرحبا نعومة، أريد طلب: ${n}`,
     fabTag: "الأقمشة",
@@ -455,8 +452,7 @@ function Index() {
                   <p className="mt-1 text-xs text-muted-foreground md:text-sm">{desc}</p>
                   <div className="mt-auto flex flex-col gap-3 pt-4 md:flex-row md:items-center md:justify-between">
                     <span className="font-serif text-lg text-rose-deep">
-                      {hasPriceRange(p) && `${c.from} `}
-                      {minPrice(p)} {c.mad}
+                      {p.price} {c.mad}
                     </span>
                     <Link
                       to="/produit/$slug"

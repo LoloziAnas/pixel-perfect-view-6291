@@ -1,24 +1,11 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useState } from "react";
-import { Banknote, Clock, RefreshCw, Ruler, ShoppingBag, Truck, Zap } from "lucide-react";
+import { Banknote, Clock, RefreshCw, ShoppingBag, Truck, Zap } from "lucide-react";
 import { QtyStepper, ShopHeader } from "@/components/shop";
 import { useCart } from "@/lib/cart";
 import { useLang } from "@/lib/lang";
-import {
-  BED_SIZES,
-  COVER_DIMS,
-  defaultSize,
-  hasPriceRange,
-  minPrice,
-  products,
-  productBySlug,
-  SITE_URL,
-  unitPrice,
-  type Product,
-  type SizeId,
-} from "@/lib/products";
-import { shopText, type ShopText } from "@/lib/shop-text";
-import type { Lang } from "@/lib/lang";
+import { products, productBySlug, SITE_URL, type Product } from "@/lib/products";
+import { shopText } from "@/lib/shop-text";
 
 export const Route = createFileRoute("/produit/$slug")({
   loader: ({ params }) => {
@@ -81,7 +68,6 @@ function ProductView({ p }: { p: Product }) {
   const s = shopText[lang];
   const { add, setDrawerOpen, startCheckout } = useCart();
   const [qty, setQty] = useState(1);
-  const [size, setSize] = useState<SizeId | undefined>(defaultSize(p));
   const [name, desc] = p[lang];
 
   const i = products.indexOf(p);
@@ -105,17 +91,11 @@ function ProductView({ p }: { p: Product }) {
           <p className="text-[0.65rem] uppercase tracking-[0.25em] text-gold">NOAUMA · Kenitra</p>
           <h1 className="mt-3 text-5xl text-ink md:text-6xl">{name}</h1>
           <p className="mt-4 font-serif text-3xl text-rose-deep">
-            {unitPrice(p, size)} {s.mad}
+            {p.price} {s.mad}
           </p>
           <p className="mt-4 text-muted-foreground">{desc}</p>
 
-          {p.sizes && size ? (
-            <SizePicker p={p} value={size} onChange={setSize} lang={lang} s={s} />
-          ) : (
-            <p className="mt-8 text-sm text-muted-foreground">{s.oneSize}</p>
-          )}
-
-          <div className="mt-6">
+          <div className="mt-8">
             <QtyStepper value={qty} onChange={setQty} />
           </div>
 
@@ -123,7 +103,7 @@ function ProductView({ p }: { p: Product }) {
             <button
               type="button"
               onClick={() => {
-                add({ slug: p.slug, size }, qty);
+                add(p.slug, qty);
                 setDrawerOpen(true);
               }}
               className="btn-ghost !py-4 text-rose-deep"
@@ -132,7 +112,7 @@ function ProductView({ p }: { p: Product }) {
             </button>
             <button
               type="button"
-              onClick={() => startCheckout([{ slug: p.slug, size, qty }], false)}
+              onClick={() => startCheckout([{ slug: p.slug, qty }], false)}
               className="btn-primary !py-4"
             >
               <Zap className="h-4 w-4" /> {s.buyNow}
@@ -188,92 +168,13 @@ function ProductView({ p }: { p: Product }) {
               <div className="flex items-center justify-between gap-2 p-3 md:p-5">
                 <span className="font-serif text-lg text-ink md:text-xl">{r[lang][0]}</span>
                 <span className="shrink-0 text-sm text-rose-deep">
-                  {hasPriceRange(r) && `${s.from} `}
-                  {minPrice(r)} {s.mad}
+                  {r.price} {s.mad}
                 </span>
               </div>
             </Link>
           ))}
         </div>
       </section>
-    </div>
-  );
-}
-
-function SizePicker({
-  p,
-  value,
-  onChange,
-  lang,
-  s,
-}: {
-  p: Product;
-  value: SizeId;
-  onChange: (size: SizeId) => void;
-  lang: Lang;
-  s: ShopText;
-}) {
-  const sizes = BED_SIZES.filter((b) => p.sizes?.includes(b.id));
-  const dims = p.kind === "throw" ? undefined : COVER_DIMS[p.kind];
-
-  return (
-    <div className="mt-8">
-      <p className="text-xs uppercase tracking-[0.2em] text-ink/70">{s.size}</p>
-      <div role="radiogroup" aria-label={s.size} className="mt-3 grid grid-cols-2 gap-2">
-        {sizes.map((b) => {
-          const selected = b.id === value;
-          return (
-            <button
-              key={b.id}
-              type="button"
-              role="radio"
-              aria-checked={selected}
-              onClick={() => onChange(b.id)}
-              className={`rounded-xl border px-3 py-2.5 text-start transition-colors ${
-                selected
-                  ? "border-rose-deep bg-rose-deep/5 text-ink"
-                  : "border-gold/40 text-ink/80 hover:border-gold"
-              }`}
-            >
-              <span className="block text-sm font-medium">{b[lang]}</span>
-              <span className="block text-xs text-muted-foreground">{s.bedFor(b.bed)}</span>
-            </button>
-          );
-        })}
-      </div>
-
-      {dims && (
-        <details className="group mt-3 text-sm">
-          <summary className="flex w-fit cursor-pointer list-none items-center gap-2 text-xs uppercase tracking-[0.15em] text-rose-deep">
-            <Ruler className="h-4 w-4" /> {s.sizeGuide}
-          </summary>
-          <table className="mt-3 w-full text-start text-sm">
-            <thead className="text-xs text-muted-foreground">
-              <tr className="border-b border-border">
-                <th className="py-2 text-start font-normal">{s.guideSize}</th>
-                <th className="py-2 text-start font-normal">{s.guideBed}</th>
-                <th className="py-2 text-start font-normal">
-                  {p.kind === "duvet" ? s.guideDuvet : s.guideBedspread}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {sizes.map((b) => (
-                <tr key={b.id} className="border-b border-border/60">
-                  <td className="py-2">{b[lang]}</td>
-                  <td className="py-2">
-                    <bdi dir="ltr">{b.bed}</bdi>
-                  </td>
-                  <td className="py-2">
-                    <bdi dir="ltr">{dims[b.id]}</bdi>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <p className="mt-2 text-xs text-muted-foreground">{s.guideNote}</p>
-        </details>
-      )}
     </div>
   );
 }

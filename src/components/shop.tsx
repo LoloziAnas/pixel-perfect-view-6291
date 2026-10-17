@@ -17,17 +17,10 @@ import {
   X,
 } from "lucide-react";
 import logo from "@/assets/logo.webp";
-import { itemKey, MAX_QTY, useCart, type CartItem } from "@/lib/cart";
+import { MAX_QTY, useCart, type CartItem } from "@/lib/cart";
 import { useLang } from "@/lib/lang";
-import {
-  lineTotal,
-  orderMessage,
-  orderTotal,
-  productBySlug,
-  wa,
-  type OrderLine,
-} from "@/lib/products";
-import { shopText, sizeLabel, type ShopText } from "@/lib/shop-text";
+import { orderMessage, orderTotal, productBySlug, wa, type OrderLine } from "@/lib/products";
+import { shopText, type ShopText } from "@/lib/shop-text";
 
 function useText() {
   const [lang] = useLang();
@@ -37,7 +30,7 @@ function useText() {
 const toLines = (items: CartItem[]): OrderLine[] =>
   items.flatMap((i) => {
     const product = productBySlug(i.slug);
-    return product ? [{ product, qty: i.qty, size: i.size }] : [];
+    return product ? [{ product, qty: i.qty }] : [];
   });
 
 export function QtyStepper({
@@ -194,47 +187,38 @@ export function CartDrawer() {
           ) : (
             <>
               <ul className="flex-1 divide-y divide-border overflow-y-auto px-5">
-                {lines.map((line) => {
-                  const { product, qty, size } = line;
-                  const key = itemKey({ slug: product.slug, size });
-                  return (
-                    <li key={key} className="flex gap-4 py-4">
-                      <img
-                        src={product.img}
-                        alt=""
-                        width={72}
-                        height={90}
-                        className="h-[90px] w-[72px] shrink-0 rounded-md object-cover"
-                      />
-                      <div className="flex flex-1 flex-col">
-                        <div className="flex items-start justify-between gap-2">
-                          <span className="font-serif text-lg leading-tight text-ink">
-                            {product[lang][0]}
-                            {size && (
-                              <span className="mt-1 block font-sans text-xs text-muted-foreground">
-                                {sizeLabel(size, lang)}
-                              </span>
-                            )}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => remove(key)}
-                            aria-label={`${s.remove} ${product[lang][0]}`}
-                            className="text-muted-foreground hover:text-destructive"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
-                        </div>
-                        <div className="mt-auto flex items-center justify-between pt-2">
-                          <QtyStepper small value={qty} onChange={(n) => setQty(key, n)} />
-                          <span className="text-sm font-medium">
-                            {lineTotal(line)} {s.mad}
-                          </span>
-                        </div>
+                {lines.map(({ product, qty }) => (
+                  <li key={product.slug} className="flex gap-4 py-4">
+                    <img
+                      src={product.img}
+                      alt=""
+                      width={72}
+                      height={90}
+                      className="h-[90px] w-[72px] shrink-0 rounded-md object-cover"
+                    />
+                    <div className="flex flex-1 flex-col">
+                      <div className="flex items-start justify-between gap-2">
+                        <span className="font-serif text-lg leading-tight text-ink">
+                          {product[lang][0]}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => remove(product.slug)}
+                          aria-label={`${s.remove} ${product[lang][0]}`}
+                          className="text-muted-foreground hover:text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
                       </div>
-                    </li>
-                  );
-                })}
+                      <div className="mt-auto flex items-center justify-between pt-2">
+                        <QtyStepper small value={qty} onChange={(n) => setQty(product.slug, n)} />
+                        <span className="text-sm font-medium">
+                          {product.price * qty} {s.mad}
+                        </span>
+                      </div>
+                    </div>
+                  </li>
+                ))}
               </ul>
               <div className="border-t border-gold/15 p-5">
                 <Totals total={orderTotal(lines)} s={s} />
@@ -393,39 +377,26 @@ function OrderForm({ items, fromCart }: { items: CartItem[]; fromCart: boolean }
       </div>
 
       <ul className="mt-5 divide-y divide-border border-y border-border">
-        {lines.map((line) => {
-          const { product, qty, size } = line;
-          return (
-            <li
-              key={itemKey({ slug: product.slug, size })}
-              className="flex items-center gap-3 py-3"
-            >
-              <div className="relative shrink-0">
-                <img
-                  src={product.img}
-                  alt=""
-                  width={56}
-                  height={56}
-                  className="h-14 w-14 rounded-md object-cover"
-                />
-                <span className="absolute -end-2 -top-2 grid h-5 w-5 place-items-center rounded-full bg-ink text-[0.65rem] text-cream">
-                  {qty}
-                </span>
-              </div>
-              <span className="flex-1 text-sm font-medium text-ink">
-                {product[lang][0]}
-                {size && (
-                  <span className="block text-xs font-normal text-muted-foreground">
-                    {sizeLabel(size, lang)}
-                  </span>
-                )}
+        {lines.map(({ product, qty }) => (
+          <li key={product.slug} className="flex items-center gap-3 py-3">
+            <div className="relative shrink-0">
+              <img
+                src={product.img}
+                alt=""
+                width={56}
+                height={56}
+                className="h-14 w-14 rounded-md object-cover"
+              />
+              <span className="absolute -end-2 -top-2 grid h-5 w-5 place-items-center rounded-full bg-ink text-[0.65rem] text-cream">
+                {qty}
               </span>
-              <span className="text-sm font-medium">
-                {lineTotal(line)} {s.mad}
-              </span>
-            </li>
-          );
-        })}
+            </div>
+            <span className="flex-1 text-sm font-medium text-ink">{product[lang][0]}</span>
+            <span className="text-sm font-medium">
+              {product.price * qty} {s.mad}
+            </span>
+          </li>
+        ))}
       </ul>
 
       <div className="mt-4">

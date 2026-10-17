@@ -76,10 +76,6 @@ export const policies: Record<Lang, Policies> = {
         a: "Oui. Ouvrez le colis devant le livreur, vérifiez l'article, puis payez en espèces.",
       },
       {
-        q: "Comment choisir la bonne taille ?",
-        a: "Choisissez la taille de votre matelas : 1 place (90×190), 2 places (140×190), Queen (160×200) ou King (180×200). Le guide des tailles de chaque produit donne les dimensions indicatives. En cas de doute, envoyez-nous les mesures de votre lit sur WhatsApp.",
-      },
-      {
         q: "Comment échanger ou retourner un article ?",
         a: "Écrivez-nous sur WhatsApp dans les 7 jours suivant la réception, avec une photo de l'article. Il doit être non utilisé et dans son emballage d'origine.",
       },
@@ -156,10 +152,6 @@ export const policies: Record<Lang, Policies> = {
       {
         q: "هل يمكنني التحقق من الطرد قبل الدفع؟",
         a: "نعم. افتحي الطرد أمام عامل التوصيل، تحققي من المنتج، ثم ادفعي نقداً.",
-      },
-      {
-        q: "كيف أختار المقاس المناسب؟",
-        a: "اختاري مقاس السرير: لشخص واحد (\u206690×190\u2069)، لشخصين (\u2066140×190\u2069)، كوين (\u2066160×200\u2069) أو كينغ (\u2066180×200\u2069). دليل المقاسات في كل منتج يعطي الأبعاد التقريبية. إذا كان عندك شك، أرسلي لنا قياسات سريرك عبر واتساب.",
       },
       {
         q: "كيف أستبدل أو أرجع منتجاً؟",
