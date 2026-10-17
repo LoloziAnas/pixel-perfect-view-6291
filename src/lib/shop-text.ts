@@ -47,12 +47,14 @@ const fr = {
   city: "Ville",
   notes: "Remarque (facultatif) — ex. : appeler avant",
   submit: "Confirmer ma commande",
-  sendNote:
-    "Votre commande sera envoyée sur WhatsApp. Nous vous contactons pour la confirmer avant l'expédition.",
+  sendNote: "Nous vous appelons pour confirmer votre commande avant l'expédition.",
+  sending: "Envoi en cours…",
+  sendError:
+    "Votre commande n'a pas pu être envoyée. Réessayez dans un instant, ou appelez-nous au +212 6 74 42 73 40.",
   thanks: "Merci pour votre commande",
   thanksText:
-    "Envoyez le message préparé sur WhatsApp pour confirmer votre commande. WhatsApp ne s'est pas ouvert ? Utilisez le bouton ci-dessous.",
-  openWa: "Ouvrir WhatsApp",
+    "Nous avons bien reçu votre commande. Nous vous appelons très vite pour la confirmer.",
+  orderNumber: "Numéro de commande",
   close: "Fermer",
   errName: "Veuillez saisir votre nom",
   errPhone: "Numéro marocain invalide (ex : 06 12 34 56 78)",
@@ -112,11 +114,13 @@ export const shopText: Record<Lang, ShopText> = {
     city: "المدينة",
     notes: "ملاحظة (اختياري) — مثلاً: الاتصال قبل التوصيل",
     submit: "تأكيد طلبي",
-    sendNote: "سيتم إرسال طلبك عبر واتساب، وسنتواصل معك لتأكيده قبل الشحن.",
+    sendNote: "سنتصل بك لتأكيد طلبك قبل الشحن.",
+    sending: "جاري الإرسال…",
+    sendError:
+      "تعذّر إرسال طلبك. حاولي مرة أخرى بعد قليل، أو اتصلي بنا على \u2066+212 6 74 42 73 40\u2069.",
     thanks: "شكراً على طلبك",
-    thanksText:
-      "أرسلي الرسالة الجاهزة عبر واتساب لتأكيد طلبك. لم يُفتح واتساب؟ استعملي الزر أسفله.",
-    openWa: "فتح واتساب",
+    thanksText: "توصّلنا بطلبك. سنتصل بك قريباً لتأكيده.",
+    orderNumber: "رقم الطلب",
     close: "إغلاق",
     errName: "المرجو إدخال الاسم",
     errPhone: "رقم مغربي غير صحيح (مثال: 06 12 34 56 78)",

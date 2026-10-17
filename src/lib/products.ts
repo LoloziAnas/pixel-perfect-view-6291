@@ -79,9 +79,10 @@ export const orderTotal = (lines: OrderLine[]) =>
   lines.reduce((sum, l) => sum + l.product.price * l.qty, 0);
 
 // Always French: this message is read by the shop, whatever language the customer used.
-export function orderMessage(lines: OrderLine[], info: OrderInfo) {
+export function orderMessage(lines: OrderLine[], info: OrderInfo, id: string) {
   return [
-    "Bonjour NOAUMA, nouvelle commande :",
+    `Nouvelle commande ${id}`,
+    "",
     ...lines.map((l) => `• ${l.product.fr[0]} × ${l.qty} — ${l.product.price * l.qty} MAD`),
     `Total : ${orderTotal(lines)} MAD (livraison gratuite)`,
     "",

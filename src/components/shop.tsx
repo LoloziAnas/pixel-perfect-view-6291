@@ -1,7 +1,6 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { z } from "zod";
 import {
   ArrowLeft,
   ArrowRight,
@@ -22,7 +21,9 @@ import {
 import logo from "@/assets/logo.webp";
 import { MAX_QTY, useCart, type CartItem } from "@/lib/cart";
 import { useLang } from "@/lib/lang";
-import { orderMessage, orderTotal, productBySlug, wa, type OrderLine } from "@/lib/products";
+import { makeCustomerSchema } from "@/lib/order-schema";
+import { placeOrder } from "@/lib/orders";
+import { orderTotal, productBySlug, type OrderLine } from "@/lib/products";
 import { shopText, type ShopText } from "@/lib/shop-text";
 
 function useText() {
@@ -267,18 +268,6 @@ export function CheckoutDialog() {
 
 type FormKey = "name" | "phone" | "address" | "city" | "notes";
 
-const makeSchema = (s: ShopText) =>
-  z.object({
-    name: z.string().trim().min(2, s.errName).max(100),
-    phone: z
-      .string()
-      .trim()
-      .regex(/^(\+?212|0)[5-7]\d{8}$/, s.errPhone),
-    address: z.string().trim().min(5, s.errAddress).max(300),
-    city: z.string().trim().min(2, s.errCity).max(80),
-    notes: z.string().trim().max(300),
-  });
-
 function OrderForm({ items, fromCart }: { items: CartItem[]; fromCart: boolean }) {
   const { clear } = useCart();
   const { lang, s } = useText();
@@ -289,13 +278,17 @@ function OrderForm({ items, fromCart }: { items: CartItem[]; fromCart: boolean }
     city: "",
     notes: "",
   });
+  const [honeypot, setHoneypot] = useState("");
   const [errors, setErrors] = useState<Partial<Record<FormKey, string>>>({});
-  const [sentUrl, setSentUrl] = useState<string | null>(null);
+  const [status, setStatus] = useState<"idle" | "sending" | "error">("idle");
+  const [orderId, setOrderId] = useState<string | null>(null);
+  const openedAt = useRef(Date.now());
   const lines = toLines(items);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const r = makeSchema(s).safeParse({ ...form, phone: form.phone.replace(/[\s.-]/g, "") });
+    if (status === "sending") return;
+    const r = makeCustomerSchema(s).safeParse(form);
     if (!r.success) {
       const errs: typeof errors = {};
       for (const i of r.error.issues) errs[i.path[0] as FormKey] ??= i.message;
@@ -303,28 +296,38 @@ function OrderForm({ items, fromCart }: { items: CartItem[]; fromCart: boolean }
       return;
     }
     setErrors({});
-    const url = wa(orderMessage(lines, r.data));
-    setSentUrl(url);
-    if (fromCart) clear();
-    // May be blocked as a popup; the confirmation screen keeps a direct link either way.
-    window.open(url, "_blank", "noopener,noreferrer");
+    setStatus("sending");
+    try {
+      const { id } = await placeOrder({
+        data: {
+          items: items.map(({ slug, qty }) => ({ slug, qty })),
+          customer: r.data,
+          lang,
+          website: honeypot,
+          elapsedMs: Date.now() - openedAt.current,
+        },
+      });
+      if (fromCart) clear();
+      setOrderId(id);
+    } catch (err) {
+      console.error(err);
+      setStatus("error");
+    }
   };
 
-  if (sentUrl) {
+  if (orderId) {
     return (
       <div className="text-center">
         <CircleCheck className="mx-auto h-12 w-12 text-gold" strokeWidth={1.25} />
         <DialogPrimitive.Title className="mt-4 text-2xl text-ink">{s.thanks}</DialogPrimitive.Title>
         <p className="mt-3 text-sm text-muted-foreground">{s.thanksText}</p>
-        <a
-          href={sentUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="btn-primary mt-6 w-full !py-4"
-        >
-          {s.openWa}
-        </a>
-        <DialogPrimitive.Close className="mt-4 text-xs uppercase tracking-widest text-muted-foreground hover:text-ink">
+        <p className="mt-5 text-xs uppercase tracking-[0.2em] text-muted-foreground">
+          {s.orderNumber}
+        </p>
+        <p className="mt-1 font-serif text-2xl text-rose-deep" dir="ltr">
+          {orderId}
+        </p>
+        <DialogPrimitive.Close className="btn-primary mt-6 w-full !py-4">
           {s.close}
         </DialogPrimitive.Close>
       </div>
@@ -419,7 +422,9 @@ function OrderForm({ items, fromCart }: { items: CartItem[]; fromCart: boolean }
                 className="h-24 w-28 shrink-0 rounded-lg object-cover shadow-soft"
               />
               <div className="flex-1">
-                <p className="font-serif text-xl leading-tight text-rose-deep">{product[lang][0]}</p>
+                <p className="font-serif text-xl leading-tight text-rose-deep">
+                  {product[lang][0]}
+                </p>
                 <p className="mt-1 text-xs text-muted-foreground">{product[lang][1]}</p>
                 <span className="mt-2 inline-block rounded-md bg-rose/20 px-2.5 py-1 text-[0.7rem] text-rose-deep">
                   {s.qtyLabel} : {qty}
@@ -459,7 +464,10 @@ function OrderForm({ items, fromCart }: { items: CartItem[]; fromCart: boolean }
             [Lock, s.trustSafe, s.trustSafeSub],
           ] as const
         ).map(([Ic, label, sub]) => (
-          <div key={label} className="flex items-center gap-2 px-2 max-sm:flex-col max-sm:text-center">
+          <div
+            key={label}
+            className="flex items-center gap-2 px-2 max-sm:flex-col max-sm:text-center"
+          >
             <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-rose/15 text-rose-deep">
               <Ic className="h-4 w-4" />
             </span>
@@ -471,11 +479,36 @@ function OrderForm({ items, fromCart }: { items: CartItem[]; fromCart: boolean }
         ))}
       </div>
 
+      {/* Hidden from people; bots that fill every field give themselves away. */}
+      <input
+        type="text"
+        name="website"
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        value={honeypot}
+        onChange={(e) => setHoneypot(e.target.value)}
+        className="absolute -left-[9999px] h-0 w-0 opacity-0"
+      />
+
+      {status === "error" && (
+        <p role="alert" className="mt-4 rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
+          {s.sendError}
+        </p>
+      )}
+
       <button
         type="submit"
-        className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-rose-deep py-4 font-serif text-base uppercase tracking-[0.12em] text-primary-foreground shadow-soft transition hover:-translate-y-0.5 hover:opacity-95"
+        disabled={status === "sending"}
+        className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-rose-deep py-4 font-serif text-base uppercase tracking-[0.12em] text-primary-foreground shadow-soft transition hover:-translate-y-0.5 hover:opacity-95 disabled:pointer-events-none disabled:opacity-60"
       >
-        <WaGlyph /> {s.submit} <ArrowRight className="h-4 w-4 rtl:rotate-180" />
+        {status === "sending" ? (
+          s.sending
+        ) : (
+          <>
+            {s.submit} <ArrowRight className="h-4 w-4 rtl:rotate-180" />
+          </>
+        )}
       </button>
       <p className="mt-3 text-center text-xs text-muted-foreground">{s.sendNote}</p>
       <div className="mt-6 flex items-center justify-center gap-3" aria-hidden>
@@ -484,13 +517,5 @@ function OrderForm({ items, fromCart }: { items: CartItem[]; fromCart: boolean }
         <span className="h-px w-24 bg-gold/50" />
       </div>
     </form>
-  );
-}
-
-function WaGlyph() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor" aria-hidden>
-      <path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3Z" />
-    </svg>
   );
 }

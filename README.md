@@ -24,3 +24,22 @@ cd <repository-name>
 npm i
 npm run dev
 ```
+
+## Orders → Google Sheet
+
+Checkout sends each order to a Google Apps Script web app, which adds a row to a Google Sheet
+(with a status column to follow up: Appelée, Confirmée, Expédiée…) and emails the shop.
+
+1. Create a Google Sheet → **Extensions → Apps Script**, paste
+   [`scripts/orders-google-sheet.gs`](scripts/orders-google-sheet.gs), and set `SECRET` to a long
+   random password.
+2. **Deploy → New deployment → Web app**, execute as *Me*, access *Anyone*. Copy the URL.
+3. Set two server secrets in the hosting environment (Lovable project settings):
+   - `ORDERS_WEBHOOK_URL`: the web app URL
+   - `ORDERS_WEBHOOK_SECRET`: the same password as `SECRET`
+
+Until both are set, checkout shows an error and asks customers to call. To run locally:
+
+```sh
+ORDERS_WEBHOOK_URL=… ORDERS_WEBHOOK_SECRET=… npm run dev
+```
