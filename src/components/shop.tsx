@@ -11,7 +11,6 @@ import {
   Truck,
   Home,
   MapPin,
-  MessageSquare,
   Minus,
   Phone,
   Plus,
