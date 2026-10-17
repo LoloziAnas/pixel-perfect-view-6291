@@ -26,7 +26,7 @@ import { useLang, type Lang } from "@/lib/lang";
 
 const TITLE = "NOAUMA — La douceur, chez vous | Linge de lit premium, Kenitra";
 const DESC =
-  "Couvre-lits et parures premium pour les maisons marocaines. Livraison partout au Maroc, paiement à la livraison.";
+  "Couvre-lits et parures premium pour les maisons marocaines. Livraison gratuite partout au Maroc, paiement à la livraison.";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -87,7 +87,7 @@ const t: Record<Lang, Dict> = {
     discover: "Découvrir la collection",
     orderWa: "Commander sur WhatsApp",
     trust: [
-      "Livraison partout au Maroc",
+      "Livraison gratuite partout au Maroc",
       "Paiement à la livraison",
       "Qualité premium",
       "Échange facile",
@@ -124,7 +124,7 @@ const t: Record<Lang, Dict> = {
     instaTitle: "Suivez-nous sur Instagram",
     follow: "Nous suivre",
     ctaTitle: "Offrez-vous la douceur",
-    ctaSub: "Commandez en un message, nous vous livrons partout au Maroc.",
+    ctaSub: "Commandez en un message, nous vous livrons gratuitement partout au Maroc.",
     footTag: "Le linge de lit qui rend chaque nuit plus douce.",
     city: "Kenitra, Maroc",
     rights: "Tous droits réservés.",
@@ -138,7 +138,7 @@ const t: Record<Lang, Dict> = {
     heroSub: "أغطية أسرّة فاخرة، ناعمة وأنيقة، مصمّمة للبيوت المغربية.",
     discover: "اكتشفي المجموعة",
     orderWa: "اطلبي عبر واتساب",
-    trust: ["التوصيل لجميع أنحاء المغرب", "الدفع عند الاستلام", "جودة فاخرة", "استبدال سهل"],
+    trust: ["توصيل مجاني لجميع أنحاء المغرب", "الدفع عند الاستلام", "جودة فاخرة", "استبدال سهل"],
     collTag: "المجموعة",
     collTitle: "قطعنا المميزة",
     order: "اطلبي",
@@ -167,7 +167,7 @@ const t: Record<Lang, Dict> = {
     instaTitle: "تابعونا على إنستغرام",
     follow: "تابعينا",
     ctaTitle: "امنحي نفسك النعومة",
-    ctaSub: "اطلبي برسالة واحدة، ونوصل لجميع أنحاء المغرب.",
+    ctaSub: "اطلبي برسالة واحدة، ونوصل مجاناً لجميع أنحاء المغرب.",
     footTag: "مفروشات تجعل كل ليلة أنعم.",
     city: "القنيطرة، المغرب",
     rights: "جميع الحقوق محفوظة.",
