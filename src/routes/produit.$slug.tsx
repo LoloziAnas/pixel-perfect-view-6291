@@ -1,8 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowLeft, Banknote, Ruler, ShoppingBag, Truck, Zap } from "lucide-react";
-import logo from "@/assets/logo.webp";
-import { CartButton, LangToggle, QtyStepper } from "@/components/shop";
+import { Banknote, Clock, RefreshCw, Ruler, ShoppingBag, Truck, Zap } from "lucide-react";
+import { QtyStepper, ShopHeader } from "@/components/shop";
 import { useCart } from "@/lib/cart";
 import { useLang } from "@/lib/lang";
 import {
@@ -90,26 +89,7 @@ function ProductView({ p }: { p: Product }) {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="bg-ink py-2 text-center text-[0.65rem] uppercase tracking-[0.2em] text-cream">
-        {s.topBar}
-      </div>
-      <header className="border-b border-gold/15">
-        <div className="mx-auto grid max-w-6xl grid-cols-[1fr_auto_1fr] items-center px-5 py-3">
-          <Link
-            to="/"
-            className="flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground hover:text-ink"
-          >
-            <ArrowLeft className="h-4 w-4 rtl:rotate-180" /> {s.home}
-          </Link>
-          <Link to="/">
-            <img src={logo} alt="Logo NOAUMA" width={64} height={64} className="h-16 w-16" />
-          </Link>
-          <div className="flex items-center justify-end gap-2">
-            <LangToggle />
-            <CartButton />
-          </div>
-        </div>
-      </header>
+      <ShopHeader />
 
       <main className="mx-auto grid max-w-6xl gap-10 px-5 py-10 md:grid-cols-2 md:py-16">
         <div className="overflow-hidden rounded-3xl shadow-soft">
@@ -164,9 +144,21 @@ function ProductView({ p }: { p: Product }) {
               <Truck className="h-4 w-4 text-gold" /> {s.freeDelivery}
             </li>
             <li className="flex items-center gap-3">
-              <Banknote className="h-4 w-4 text-gold" /> {s.cod}
+              <Clock className="h-4 w-4 text-gold" /> {s.deliveryTime}
+            </li>
+            <li className="flex items-center gap-3">
+              <Banknote className="h-4 w-4 text-gold" /> {s.checkParcel}
+            </li>
+            <li className="flex items-center gap-3">
+              <RefreshCw className="h-4 w-4 text-gold" /> {s.exchange}
             </li>
           </ul>
+          <Link
+            to="/aide"
+            className="mt-4 w-fit text-xs uppercase tracking-[0.15em] text-rose-deep underline-offset-4 hover:underline"
+          >
+            {s.helpLink}
+          </Link>
         </div>
       </main>
 

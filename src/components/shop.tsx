@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { Link } from "@tanstack/react-router";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { z } from "zod";
 import {
+  ArrowLeft,
   CircleCheck,
   Home,
   MapPin,
@@ -14,6 +16,7 @@ import {
   User,
   X,
 } from "lucide-react";
+import logo from "@/assets/logo.webp";
 import { itemKey, MAX_QTY, useCart, type CartItem } from "@/lib/cart";
 import { useLang } from "@/lib/lang";
 import {
@@ -70,6 +73,34 @@ export function QtyStepper({
         <Plus className="h-4 w-4" />
       </button>
     </div>
+  );
+}
+
+export function ShopHeader() {
+  const { s } = useText();
+  return (
+    <>
+      <div className="bg-ink py-2 text-center text-[0.65rem] uppercase tracking-[0.2em] text-cream">
+        {s.topBar}
+      </div>
+      <header className="border-b border-gold/15">
+        <div className="mx-auto grid max-w-6xl grid-cols-[1fr_auto_1fr] items-center px-5 py-3">
+          <Link
+            to="/"
+            className="flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground hover:text-ink"
+          >
+            <ArrowLeft className="h-4 w-4 rtl:rotate-180" /> {s.home}
+          </Link>
+          <Link to="/">
+            <img src={logo} alt="Logo NOAUMA" width={64} height={64} className="h-16 w-16" />
+          </Link>
+          <div className="flex items-center justify-end gap-2">
+            <LangToggle />
+            <CartButton />
+          </div>
+        </div>
+      </header>
+    </>
   );
 }
 

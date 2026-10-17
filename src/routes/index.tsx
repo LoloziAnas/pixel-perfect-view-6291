@@ -16,6 +16,7 @@ import {
   X,
   ArrowRight,
   ChevronDown,
+  CircleHelp,
 } from "lucide-react";
 import hero from "@/assets/hero.jpg";
 import fabric from "@/assets/fabric.jpg";
@@ -24,6 +25,7 @@ import { hasPriceRange, minPrice, products, wa } from "@/lib/products";
 import logo from "@/assets/logo.webp";
 import { useLang, type Lang } from "@/lib/lang";
 import { CartButton, LangToggle } from "@/components/shop";
+import { shopText } from "@/lib/shop-text";
 
 const TITLE = "NOAUMA — La douceur, chez vous | Linge de lit premium, Kenitra";
 const DESC =
@@ -92,7 +94,7 @@ const t: Record<Lang, Dict> = {
       "Livraison gratuite partout au Maroc",
       "Paiement à la livraison",
       "Qualité premium",
-      "Échange facile",
+      "Échange sous 7 jours",
     ],
     collTag: "Collection",
     collTitle: "Nos pièces signature",
@@ -141,7 +143,12 @@ const t: Record<Lang, Dict> = {
     heroSub: "أغطية أسرّة فاخرة، ناعمة وأنيقة، مصمّمة للبيوت المغربية.",
     discover: "اكتشفي المجموعة",
     orderWa: "اطلبي عبر واتساب",
-    trust: ["توصيل مجاني لجميع أنحاء المغرب", "الدفع عند الاستلام", "جودة فاخرة", "استبدال سهل"],
+    trust: [
+      "توصيل مجاني لجميع أنحاء المغرب",
+      "الدفع عند الاستلام",
+      "جودة فاخرة",
+      "استبدال خلال 7 أيام",
+    ],
     collTag: "المجموعة",
     collTitle: "قطعنا المميزة",
     order: "اكتشفي",
@@ -638,6 +645,12 @@ function Index() {
             <li className="flex items-center gap-3">
               <MapPin className="h-4 w-4 text-gold" />
               {c.city}
+            </li>
+            <li>
+              <Link to="/aide" className="flex items-center gap-3 hover:text-gold">
+                <CircleHelp className="h-4 w-4 text-gold" />
+                {shopText[lang].helpLink}
+              </Link>
             </li>
           </ul>
           <div className="flex gap-3 md:justify-end">
