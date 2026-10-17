@@ -257,7 +257,7 @@ export function CheckoutDialog() {
         <DialogPrimitive.Content
           aria-describedby={undefined}
           dir={lang === "ar" ? "rtl" : "ltr"}
-          className="fixed left-1/2 top-1/2 z-50 max-h-[92vh] w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-3xl border border-gold/20 bg-cream/60 bg-card p-6 sm:p-8 shadow-soft outline-none"
+          className="fixed left-1/2 top-1/2 z-50 max-h-[92vh] w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-3xl border border-gold/20 bg-card p-6 sm:p-8 shadow-soft outline-none"
         >
           {checkout && <OrderForm items={checkout.items} fromCart={checkout.fromCart} />}
         </DialogPrimitive.Content>
