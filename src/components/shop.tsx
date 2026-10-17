@@ -253,11 +253,11 @@ export function CheckoutDialog() {
   return (
     <DialogPrimitive.Root open={checkout !== null} onOpenChange={(o) => !o && closeCheckout()}>
       <DialogPrimitive.Portal>
-        <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-ink/60" />
+        <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-ink/40 backdrop-blur-md" />
         <DialogPrimitive.Content
           aria-describedby={undefined}
           dir={lang === "ar" ? "rtl" : "ltr"}
-          className="fixed left-1/2 top-1/2 z-50 max-h-[92vh] w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-3xl border border-gold/20 bg-card p-6 sm:p-8 shadow-soft outline-none"
+          className="checkout-card fixed left-1/2 top-1/2 z-50 max-h-[92vh] w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-3xl border border-gold/20 bg-card p-6 sm:p-8 shadow-soft outline-none"
         >
           {checkout && <OrderForm items={checkout.items} fromCart={checkout.fromCart} />}
         </DialogPrimitive.Content>
@@ -343,7 +343,6 @@ function OrderForm({ items, fromCart }: { items: CartItem[]; fromCart: boolean }
     { key: "phone", ph: s.phone, icon: Phone, type: "tel", autoComplete: "tel" },
     { key: "address", ph: s.address, icon: Home, autoComplete: "street-address" },
     { key: "city", ph: s.city, icon: MapPin, autoComplete: "address-level2" },
-    { key: "notes", ph: s.notes, icon: MessageSquare, autoComplete: "off" },
   ];
 
   const total = orderTotal(lines);
@@ -357,11 +356,11 @@ function OrderForm({ items, fromCart }: { items: CartItem[]; fromCart: boolean }
       </DialogPrimitive.Close>
 
       <div className="flex flex-col items-center text-center">
-        <img src={logo} alt="Logo NOAUMA" width={80} height={80} className="h-20 w-20" />
+        <img src={logo} alt="Logo NOAUMA" width={112} height={112} className="h-28 w-28" />
         <p className="mt-1 text-[0.6rem] uppercase tracking-[0.3em] text-gold">{s.tagline}</p>
         <div className="mt-4 flex w-full items-center gap-3">
           <span className="h-px flex-1 bg-gold/40" />
-          <DialogPrimitive.Title className="text-2xl uppercase tracking-[0.12em] text-rose-deep">
+          <DialogPrimitive.Title className="text-3xl uppercase tracking-[0.12em] text-rose-deep">
             {s.formTitle}
           </DialogPrimitive.Title>
           <span className="h-px flex-1 bg-gold/40" />
@@ -418,15 +417,16 @@ function OrderForm({ items, fromCart }: { items: CartItem[]; fromCart: boolean }
                 alt=""
                 width={80}
                 height={80}
-                className="h-20 w-20 shrink-0 rounded-lg object-cover"
+                className="h-24 w-28 shrink-0 rounded-lg object-cover shadow-soft"
               />
               <div className="flex-1">
-                <p className="font-serif text-lg leading-tight text-rose-deep">{product[lang][0]}</p>
-                <span className="mt-1 inline-block rounded-full bg-cream px-2.5 py-0.5 text-[0.7rem] text-ink">
-                  × {qty}
+                <p className="font-serif text-xl leading-tight text-rose-deep">{product[lang][0]}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{product[lang][1]}</p>
+                <span className="mt-2 inline-block rounded-md bg-rose/20 px-2.5 py-1 text-[0.7rem] text-rose-deep">
+                  {s.qtyLabel} : {qty}
                 </span>
               </div>
-              <span className="font-serif text-lg text-ink">
+              <span className="font-serif text-2xl text-ink">
                 {product.price * qty} {s.mad}
               </span>
             </li>
@@ -452,31 +452,46 @@ function OrderForm({ items, fromCart }: { items: CartItem[]; fromCart: boolean }
         </div>
       </div>
 
-      <div className="mt-5 grid grid-cols-3 gap-2 text-center text-[0.65rem] leading-snug text-muted-foreground">
-        {[
-          [Truck, s.trustShip],
-          [ShieldCheck, s.trustPay],
-          [Lock, s.trustSafe],
-        ].map(([I, label]) => {
-          const Ic = I as typeof Truck;
-          return (
-            <div key={label as string} className="flex flex-col items-center gap-1.5">
-              <span className="grid h-9 w-9 place-items-center rounded-full bg-cream text-rose-deep">
-                <Ic className="h-4 w-4" />
-              </span>
-              {label as string}
-            </div>
-          );
-        })}
+      <div className="mt-5 grid grid-cols-3 divide-x divide-gold/30 rounded-xl bg-cream/50 py-3 text-[0.62rem] leading-snug text-muted-foreground rtl:divide-x-reverse">
+        {(
+          [
+            [Truck, s.trustShip, s.trustShipSub],
+            [ShieldCheck, s.trustPay, s.trustPaySub],
+            [Lock, s.trustSafe, s.trustSafeSub],
+          ] as const
+        ).map(([Ic, label, sub]) => (
+          <div key={label} className="flex items-center gap-2 px-2 max-sm:flex-col max-sm:text-center">
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-rose/15 text-rose-deep">
+              <Ic className="h-4 w-4" />
+            </span>
+            <span>
+              <span className="block text-ink/80">{label}</span>
+              {sub}
+            </span>
+          </div>
+        ))}
       </div>
 
       <button
         type="submit"
-        className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-rose-deep py-4 text-xs uppercase tracking-[0.18em] text-primary-foreground shadow-soft transition hover:-translate-y-0.5 hover:opacity-95"
+        className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-rose-deep py-4 font-serif text-base uppercase tracking-[0.12em] text-primary-foreground shadow-soft transition hover:-translate-y-0.5 hover:opacity-95"
       >
-        {s.submit} <ArrowRight className="h-4 w-4 rtl:rotate-180" />
+        <WaGlyph /> {s.submit} <ArrowRight className="h-4 w-4 rtl:rotate-180" />
       </button>
       <p className="mt-3 text-center text-xs text-muted-foreground">{s.sendNote}</p>
+      <div className="mt-6 flex items-center justify-center gap-3" aria-hidden>
+        <span className="h-px w-24 bg-gold/50" />
+        <img src={logo} alt="" width={32} height={32} className="h-8 w-8" />
+        <span className="h-px w-24 bg-gold/50" />
+      </div>
     </form>
+  );
+}
+
+function WaGlyph() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor" aria-hidden>
+      <path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3Z" />
+    </svg>
   );
 }

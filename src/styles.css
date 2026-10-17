@@ -154,3 +154,10 @@ html:not(.reveal-ready) .reveal { animation: reveal-fallback .6s ease 1.5s forwa
 @keyframes reveal-fallback { to { opacity: 1; transform: none; } }
 .reveal.in { opacity: 1; transform: none; }
 @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; } }
+
+.checkout-card {
+  background:
+    radial-gradient(circle at 0% 0%, color-mix(in oklab, var(--rose) 22%, transparent), transparent 35%),
+    radial-gradient(circle at 100% 8%, color-mix(in oklab, var(--rose) 18%, transparent), transparent 30%),
+    linear-gradient(180deg, var(--cream), var(--background));
+}
