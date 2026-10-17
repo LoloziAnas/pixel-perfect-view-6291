@@ -23,6 +23,7 @@ import about from "@/assets/about.jpg";
 import { products, wa } from "@/lib/products";
 import logo from "@/assets/logo.webp";
 import { useLang, type Lang } from "@/lib/lang";
+import { CartButton, LangToggle } from "@/components/shop";
 
 const TITLE = "NOAUMA — La douceur, chez vous | Linge de lit premium, Kenitra";
 const DESC =
@@ -94,7 +95,7 @@ const t: Record<Lang, Dict> = {
     ],
     collTag: "Collection",
     collTitle: "Nos pièces signature",
-    order: "Commander",
+    order: "Voir",
     mad: "MAD",
     orderMsg: (n: string) => `Bonjour NOAUMA, je souhaite commander : ${n}`,
     fabTag: "Matières",
@@ -141,7 +142,7 @@ const t: Record<Lang, Dict> = {
     trust: ["توصيل مجاني لجميع أنحاء المغرب", "الدفع عند الاستلام", "جودة فاخرة", "استبدال سهل"],
     collTag: "المجموعة",
     collTitle: "قطعنا المميزة",
-    order: "اطلبي",
+    order: "اكتشفي",
     mad: "درهم",
     orderMsg: (n: string) => `مرحبا نعومة، أريد طلب: ${n}`,
     fabTag: "الأقمشة",
@@ -242,7 +243,7 @@ function SectionHead({ tag, title }: { tag: string; title: string }) {
 }
 
 function Index() {
-  const [lang, setLang] = useLang();
+  const [lang] = useLang();
   const [open, setOpen] = useState(false);
   // On phones the floating button would cover the hero trust bar; hide it while that bar is on screen.
   const trustRef = useRef<HTMLDivElement>(null);
@@ -304,13 +305,8 @@ function Index() {
           />
           <Logo size={72} className="md:hidden" />
           <div className="flex shrink-0 items-center gap-2">
-            <button
-              onClick={() => setLang(lang === "fr" ? "ar" : "fr")}
-              className="rounded-full border border-gold/50 px-3 py-1.5 text-[0.62rem] tracking-widest text-ink transition-colors hover:bg-cream"
-              aria-label="Changer de langue / تغيير اللغة"
-            >
-              {lang === "fr" ? "العربية" : "FR"}
-            </button>
+            <LangToggle />
+            <CartButton />
             <a
               href={wa(c.defaultMsg)}
               target="_blank"
@@ -423,16 +419,23 @@ function Index() {
                 key={p.fr[0]}
                 className="reveal group flex flex-col overflow-hidden rounded-2xl bg-card shadow-soft"
               >
-                <div className="aspect-[4/5] overflow-hidden">
+                {/* Duplicate of the title link for tapping the photo; hidden from keyboard/AT. */}
+                <Link
+                  to="/produit/$slug"
+                  params={{ slug: p.slug }}
+                  tabIndex={-1}
+                  aria-hidden="true"
+                  className="block aspect-[4/5] overflow-hidden"
+                >
                   <img
                     src={p.img}
-                    alt={name}
+                    alt=""
                     loading="lazy"
                     width={800}
                     height={1008}
                     className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
-                </div>
+                </Link>
                 <div className="flex flex-1 flex-col p-3 md:p-6">
                   <h3 className="text-xl text-ink md:text-2xl">
                     <Link to="/produit/$slug" params={{ slug: p.slug }}>

@@ -64,17 +64,31 @@ export const products: Product[] = [
   },
 ];
 
-export type OrderInfo = { name: string; phone: string; address: string; city: string };
+export const productBySlug = (slug: string) => products.find((p) => p.slug === slug);
 
-export function orderMessage(p: Product, qty: number, info: OrderInfo) {
+export type OrderLine = { product: Product; qty: number };
+export type OrderInfo = {
+  name: string;
+  phone: string;
+  address: string;
+  city: string;
+  notes?: string;
+};
+
+export const orderTotal = (lines: OrderLine[]) =>
+  lines.reduce((sum, l) => sum + l.product.price * l.qty, 0);
+
+// Always French: this message is read by the shop, whatever language the customer used.
+export function orderMessage(lines: OrderLine[], info: OrderInfo) {
   return [
     "Bonjour NOAUMA, nouvelle commande :",
-    `Produit : ${p.fr[0]} × ${qty}`,
-    `Total : ${p.price * qty} MAD (livraison gratuite)`,
+    ...lines.map((l) => `• ${l.product.fr[0]} × ${l.qty} — ${l.product.price * l.qty} MAD`),
+    `Total : ${orderTotal(lines)} MAD (livraison gratuite)`,
     "",
     `Nom : ${info.name}`,
     `Téléphone : ${info.phone}`,
     `Adresse : ${info.address}`,
     `Ville : ${info.city}`,
+    ...(info.notes ? [`Remarque : ${info.notes}`] : []),
   ].join("\n");
 }

@@ -1,33 +1,21 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { z } from "zod";
-import {
-  ArrowLeft,
-  Banknote,
-  CircleCheck,
-  Home,
-  MapPin,
-  Minus,
-  Phone,
-  Plus,
-  ShoppingBag,
-  Truck,
-  User,
-  X,
-} from "lucide-react";
+import { useState } from "react";
+import { ArrowLeft, Banknote, ShoppingBag, Truck, Zap } from "lucide-react";
 import logo from "@/assets/logo.webp";
-import { setDocumentLang } from "@/lib/lang";
-import { products, wa, orderMessage, SITE_URL, type Product } from "@/lib/products";
+import { CartButton, LangToggle, QtyStepper } from "@/components/shop";
+import { useCart } from "@/lib/cart";
+import { useLang } from "@/lib/lang";
+import { products, productBySlug, SITE_URL, type Product } from "@/lib/products";
+import { shopText } from "@/lib/shop-text";
 
 export const Route = createFileRoute("/produit/$slug")({
   loader: ({ params }) => {
-    const product = products.find((p) => p.slug === params.slug);
+    const product = productBySlug(params.slug);
     if (!product) throw notFound();
     return { slug: product.slug };
   },
   head: ({ loaderData }) => {
-    const p = products.find((x) => x.slug === loaderData?.slug);
+    const p = productBySlug(loaderData?.slug ?? "");
     const title = p ? `${p.fr[0]} — NOAUMA` : "Produit — NOAUMA";
     const desc = p
       ? `${p.fr[1]} ${p.price} MAD, livraison gratuite partout au Maroc.`
@@ -55,54 +43,57 @@ export const Route = createFileRoute("/produit/$slug")({
 });
 
 function Missing() {
+  const [lang] = useLang();
+  const s = shopText[lang];
   return (
     <div className="grid min-h-screen place-items-center px-5 text-center">
       <div>
-        <h1 className="text-4xl text-ink">Produit introuvable</h1>
+        <h1 className="text-4xl text-ink">{s.notFound}</h1>
         <Link to="/" className="btn-primary mt-6">
-          Retour à l'accueil
+          {s.backHome}
         </Link>
       </div>
     </div>
   );
 }
 
-const schema = z.object({
-  name: z.string().trim().min(2, "Veuillez saisir votre nom").max(100),
-  phone: z
-    .string()
-    .trim()
-    .regex(/^(\+?212|0)[5-7]\d{8}$/, "Numéro marocain invalide (ex : 06 12 34 56 78)"),
-  address: z.string().trim().min(5, "Adresse complète obligatoire").max(300),
-  city: z.string().trim().min(2, "Veuillez saisir votre ville").max(80),
-});
-
 function ProductPage() {
   const { slug } = Route.useLoaderData();
-  const p = products.find((x) => x.slug === slug) as Product;
-  const [qty, setQty] = useState(1);
-  const [open, setOpen] = useState(false);
+  const p = productBySlug(slug) as Product;
+  // Keyed so quantity resets when moving between products via "Vous aimerez aussi".
+  return <ProductView key={p.slug} p={p} />;
+}
 
-  // This page is French-only; undo an Arabic/RTL choice carried over from the home page.
-  useEffect(() => setDocumentLang("fr"), []);
+function ProductView({ p }: { p: Product }) {
+  const [lang] = useLang();
+  const s = shopText[lang];
+  const { add, setDrawerOpen, startCheckout } = useCart();
+  const [qty, setQty] = useState(1);
+  const [name, desc] = p[lang];
+
+  const i = products.indexOf(p);
+  const related = [1, 2, 3].map((k) => products[(i + k) % products.length]!);
 
   return (
     <div className="min-h-screen bg-background">
       <div className="bg-ink py-2 text-center text-[0.65rem] uppercase tracking-[0.2em] text-cream">
-        Livraison gratuite partout au Maroc · Paiement à la livraison
+        {s.topBar}
       </div>
       <header className="border-b border-gold/15">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3">
+        <div className="mx-auto grid max-w-6xl grid-cols-[1fr_auto_1fr] items-center px-5 py-3">
           <Link
             to="/"
             className="flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground hover:text-ink"
           >
-            <ArrowLeft className="h-4 w-4" /> Accueil
+            <ArrowLeft className="h-4 w-4 rtl:rotate-180" /> {s.home}
           </Link>
           <Link to="/">
             <img src={logo} alt="Logo NOAUMA" width={64} height={64} className="h-16 w-16" />
           </Link>
-          <span className="w-20" />
+          <div className="flex items-center justify-end gap-2">
+            <LangToggle />
+            <CartButton />
+          </div>
         </div>
       </header>
 
@@ -110,7 +101,7 @@ function ProductPage() {
         <div className="overflow-hidden rounded-3xl shadow-soft">
           <img
             src={p.img}
-            alt={p.fr[0]}
+            alt={name}
             width={800}
             height={1000}
             className="aspect-[4/5] h-full w-full object-cover"
@@ -118,214 +109,80 @@ function ProductPage() {
         </div>
         <div className="flex flex-col justify-center">
           <p className="text-[0.65rem] uppercase tracking-[0.25em] text-gold">NOAUMA · Kenitra</p>
-          <h1 className="mt-3 text-5xl text-ink md:text-6xl">{p.fr[0]}</h1>
-          <p className="mt-4 font-serif text-3xl text-rose-deep">{p.price} MAD</p>
-          <p className="mt-4 text-muted-foreground">{p.fr[1]}</p>
+          <h1 className="mt-3 text-5xl text-ink md:text-6xl">{name}</h1>
+          <p className="mt-4 font-serif text-3xl text-rose-deep">
+            {p.price} {s.mad}
+          </p>
+          <p className="mt-4 text-muted-foreground">{desc}</p>
 
-          <div className="mt-8 inline-flex w-fit items-center rounded-full border border-gold/40">
+          <div className="mt-8">
+            <QtyStepper value={qty} onChange={setQty} />
+          </div>
+
+          <div className="mt-6 grid gap-3 sm:grid-cols-2">
             <button
-              aria-label="Diminuer"
-              onClick={() => setQty((q) => Math.max(1, q - 1))}
-              className="grid h-11 w-11 place-items-center"
+              type="button"
+              onClick={() => {
+                add(p.slug, qty);
+                setDrawerOpen(true);
+              }}
+              className="btn-ghost !py-4 text-rose-deep"
             >
-              <Minus className="h-4 w-4" />
+              <ShoppingBag className="h-4 w-4" /> {s.addToCart}
             </button>
-            <span className="w-10 text-center">{qty}</span>
             <button
-              aria-label="Augmenter"
-              onClick={() => setQty((q) => Math.min(20, q + 1))}
-              className="grid h-11 w-11 place-items-center"
+              type="button"
+              onClick={() => startCheckout([{ slug: p.slug, qty }], false)}
+              className="btn-primary !py-4"
             >
-              <Plus className="h-4 w-4" />
+              <Zap className="h-4 w-4" /> {s.buyNow}
             </button>
           </div>
 
-          <button onClick={() => setOpen(true)} className="btn-primary mt-6 w-full !py-4">
-            <ShoppingBag className="h-4 w-4" /> Acheter maintenant
-          </button>
-
           <ul className="mt-8 space-y-3 text-sm text-muted-foreground">
             <li className="flex items-center gap-3">
-              <Truck className="h-4 w-4 text-gold" /> Livraison gratuite partout au Maroc
+              <Truck className="h-4 w-4 text-gold" /> {s.freeDelivery}
             </li>
             <li className="flex items-center gap-3">
-              <Banknote className="h-4 w-4 text-gold" /> Paiement à la livraison
+              <Banknote className="h-4 w-4 text-gold" /> {s.cod}
             </li>
           </ul>
         </div>
       </main>
 
-      <OrderModal product={p} qty={qty} open={open} onOpenChange={setOpen} />
+      <section className="mx-auto max-w-6xl px-5 pb-20">
+        <div className="mb-8 flex flex-col items-center text-center">
+          <h2 className="text-3xl text-ink md:text-4xl">{s.related}</h2>
+          <div className="gold-line mt-4" />
+        </div>
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-8">
+          {related.map((r, idx) => (
+            <Link
+              key={r.slug}
+              to="/produit/$slug"
+              params={{ slug: r.slug }}
+              className={`group overflow-hidden rounded-2xl bg-card shadow-soft ${idx === 2 ? "max-md:hidden" : ""}`}
+            >
+              <div className="aspect-[4/5] overflow-hidden">
+                <img
+                  src={r.img}
+                  alt={r[lang][0]}
+                  loading="lazy"
+                  width={800}
+                  height={1008}
+                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+              </div>
+              <div className="flex items-center justify-between gap-2 p-3 md:p-5">
+                <span className="font-serif text-lg text-ink md:text-xl">{r[lang][0]}</span>
+                <span className="shrink-0 text-sm text-rose-deep">
+                  {r.price} {s.mad}
+                </span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
     </div>
-  );
-}
-
-// Radix handles Escape, focus trap and scroll lock; the form unmounts (and resets) on close.
-function OrderModal({
-  product,
-  qty,
-  open,
-  onOpenChange,
-}: {
-  product: Product;
-  qty: number;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}) {
-  return (
-    <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
-      <DialogPrimitive.Portal>
-        <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-ink/60" />
-        <DialogPrimitive.Content
-          aria-describedby={undefined}
-          className="fixed left-1/2 top-1/2 z-50 max-h-[92vh] outline-none w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-2xl bg-card p-6 shadow-soft"
-        >
-          <OrderForm product={product} qty={qty} />
-        </DialogPrimitive.Content>
-      </DialogPrimitive.Portal>
-    </DialogPrimitive.Root>
-  );
-}
-
-function OrderForm({ product, qty }: { product: Product; qty: number }) {
-  const [form, setForm] = useState({ name: "", phone: "", address: "", city: "" });
-  const [errors, setErrors] = useState<Partial<Record<keyof typeof form, string>>>({});
-  const [sentUrl, setSentUrl] = useState<string | null>(null);
-  const total = product.price * qty;
-
-  const submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const r = schema.safeParse({ ...form, phone: form.phone.replace(/[\s.-]/g, "") });
-    if (!r.success) {
-      const errs: typeof errors = {};
-      for (const i of r.error.issues) errs[i.path[0] as keyof typeof form] ??= i.message;
-      setErrors(errs);
-      return;
-    }
-    setErrors({});
-    const url = wa(orderMessage(product, qty, r.data));
-    setSentUrl(url);
-    // May be blocked as a popup; the confirmation screen keeps a direct link either way.
-    window.open(url, "_blank", "noopener,noreferrer");
-  };
-
-  if (sentUrl) {
-    return (
-      <div className="text-center">
-        <CircleCheck className="mx-auto h-12 w-12 text-gold" strokeWidth={1.25} />
-        <DialogPrimitive.Title className="mt-4 text-2xl text-ink">
-          Merci pour votre commande
-        </DialogPrimitive.Title>
-        <p className="mt-3 text-sm text-muted-foreground">
-          Envoyez le message préparé sur WhatsApp pour confirmer votre commande. WhatsApp ne s'est
-          pas ouvert ? Utilisez le bouton ci-dessous.
-        </p>
-        <a
-          href={sentUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="btn-primary mt-6 w-full !py-4"
-        >
-          Ouvrir WhatsApp
-        </a>
-        <DialogPrimitive.Close className="mt-4 text-xs uppercase tracking-widest text-muted-foreground hover:text-ink">
-          Fermer
-        </DialogPrimitive.Close>
-      </div>
-    );
-  }
-
-  const fields: {
-    key: keyof typeof form;
-    ph: string;
-    icon: typeof User;
-    type?: string;
-    autoComplete: string;
-  }[] = [
-    { key: "name", ph: "Nom & Prénom", icon: User, autoComplete: "name" },
-    { key: "phone", ph: "Téléphone", icon: Phone, type: "tel", autoComplete: "tel" },
-    {
-      key: "address",
-      ph: "Adresse complète obligatoire",
-      icon: Home,
-      autoComplete: "street-address",
-    },
-    { key: "city", ph: "Ville", icon: MapPin, autoComplete: "address-level2" },
-  ];
-
-  return (
-    <form onSubmit={submit} noValidate>
-      <div className="mb-5 flex items-center justify-between">
-        <DialogPrimitive.Title className="text-2xl text-ink">
-          Insérer vos coordonnées
-        </DialogPrimitive.Title>
-        <DialogPrimitive.Close aria-label="Fermer">
-          <X className="h-5 w-5" />
-        </DialogPrimitive.Close>
-      </div>
-
-      <div className="space-y-3">
-        {fields.map(({ key, ph, icon: Icon, type, autoComplete }) => (
-          <div key={key}>
-            <label className="flex overflow-hidden rounded-lg border border-input focus-within:border-gold">
-              <span className="grid w-11 place-items-center bg-cream text-ink">
-                <Icon className="h-4 w-4" />
-              </span>
-              <input
-                type={type ?? "text"}
-                name={key}
-                autoComplete={autoComplete}
-                placeholder={ph}
-                aria-label={ph}
-                value={form[key]}
-                maxLength={300}
-                onChange={(e) => setForm({ ...form, [key]: e.target.value })}
-                className="flex-1 bg-transparent px-3 py-3 text-sm outline-none"
-              />
-            </label>
-            {errors[key] && <p className="mt-1 text-xs text-destructive">{errors[key]}</p>}
-          </div>
-        ))}
-      </div>
-
-      <div className="mt-5 flex items-center gap-3 border-y border-border py-4">
-        <div className="relative">
-          <img
-            src={product.img}
-            alt=""
-            width={56}
-            height={56}
-            className="h-14 w-14 rounded-md object-cover"
-          />
-          <span className="absolute -right-2 -top-2 grid h-5 w-5 place-items-center rounded-full bg-ink text-[0.65rem] text-cream">
-            {qty}
-          </span>
-        </div>
-        <span className="flex-1 text-sm font-medium text-ink">{product.fr[0]}</span>
-        <span className="text-sm font-medium">{total} dh</span>
-      </div>
-
-      <div className="mt-4 space-y-2 rounded-lg bg-cream p-4 text-sm">
-        <div className="flex justify-between">
-          <span>Sous-total</span>
-          <span>{total} dh</span>
-        </div>
-        <div className="flex justify-between">
-          <span>Livraison</span>
-          <span className="font-medium">Gratuit</span>
-        </div>
-        <div className="flex justify-between border-t border-border pt-2 font-medium text-ink">
-          <span>Total</span>
-          <span className="font-serif text-xl">{total} dh</span>
-        </div>
-      </div>
-
-      <button type="submit" className="btn-primary mt-5 w-full !py-4">
-        Acheter maintenant
-      </button>
-      <p className="mt-3 text-center text-xs text-muted-foreground">
-        Votre commande sera envoyée sur WhatsApp pour confirmation.
-      </p>
-    </form>
   );
 }
