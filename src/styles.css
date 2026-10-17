@@ -149,5 +149,8 @@
 }
 
 .reveal { opacity: 0; transform: translateY(24px); transition: opacity 1s ease, transform 1s ease; }
+/* If scripts are slow or fail to load, show content anyway; JS adds .reveal-ready once it takes over. */
+html:not(.reveal-ready) .reveal { animation: reveal-fallback .6s ease 1.5s forwards; }
+@keyframes reveal-fallback { to { opacity: 1; transform: none; } }
 .reveal.in { opacity: 1; transform: none; }
 @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; } }

@@ -1,9 +1,24 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { z } from "zod";
-import { ArrowLeft, Banknote, Home, MapPin, Minus, Phone, Plus, ShoppingBag, Truck, User, X } from "lucide-react";
-import logo from "@/assets/logo.png";
-import { products, wa, orderMessage, type Product } from "@/lib/products";
+import {
+  ArrowLeft,
+  Banknote,
+  CircleCheck,
+  Home,
+  MapPin,
+  Minus,
+  Phone,
+  Plus,
+  ShoppingBag,
+  Truck,
+  User,
+  X,
+} from "lucide-react";
+import logo from "@/assets/logo.webp";
+import { setDocumentLang } from "@/lib/lang";
+import { products, wa, orderMessage, SITE_URL, type Product } from "@/lib/products";
 
 export const Route = createFileRoute("/produit/$slug")({
   loader: ({ params }) => {
@@ -14,7 +29,9 @@ export const Route = createFileRoute("/produit/$slug")({
   head: ({ loaderData }) => {
     const p = products.find((x) => x.slug === loaderData?.slug);
     const title = p ? `${p.fr[0]} — NOAUMA` : "Produit — NOAUMA";
-    const desc = p ? `${p.fr[1]} ${p.price} MAD, livraison gratuite partout au Maroc.` : "Linge de lit premium NOAUMA.";
+    const desc = p
+      ? `${p.fr[1]} ${p.price} MAD, livraison gratuite partout au Maroc.`
+      : "Linge de lit premium NOAUMA.";
     return {
       meta: [
         { title },
@@ -22,6 +39,12 @@ export const Route = createFileRoute("/produit/$slug")({
         { property: "og:title", content: title },
         { property: "og:description", content: desc },
         { property: "og:type", content: "product" },
+        ...(p
+          ? [
+              { property: "og:image", content: `${SITE_URL}${p.img}` },
+              { name: "twitter:image", content: `${SITE_URL}${p.img}` },
+            ]
+          : []),
         { name: "twitter:card", content: "summary_large_image" },
       ],
     };
@@ -36,7 +59,9 @@ function Missing() {
     <div className="grid min-h-screen place-items-center px-5 text-center">
       <div>
         <h1 className="text-4xl text-ink">Produit introuvable</h1>
-        <Link to="/" className="btn-primary mt-6">Retour à l'accueil</Link>
+        <Link to="/" className="btn-primary mt-6">
+          Retour à l'accueil
+        </Link>
       </div>
     </div>
   );
@@ -44,7 +69,10 @@ function Missing() {
 
 const schema = z.object({
   name: z.string().trim().min(2, "Veuillez saisir votre nom").max(100),
-  phone: z.string().trim().regex(/^(\+?212|0)[5-7]\d{8}$/, "Numéro marocain invalide (ex : 06 12 34 56 78)"),
+  phone: z
+    .string()
+    .trim()
+    .regex(/^(\+?212|0)[5-7]\d{8}$/, "Numéro marocain invalide (ex : 06 12 34 56 78)"),
   address: z.string().trim().min(5, "Adresse complète obligatoire").max(300),
   city: z.string().trim().min(2, "Veuillez saisir votre ville").max(80),
 });
@@ -55,6 +83,9 @@ function ProductPage() {
   const [qty, setQty] = useState(1);
   const [open, setOpen] = useState(false);
 
+  // This page is French-only; undo an Arabic/RTL choice carried over from the home page.
+  useEffect(() => setDocumentLang("fr"), []);
+
   return (
     <div className="min-h-screen bg-background">
       <div className="bg-ink py-2 text-center text-[0.65rem] uppercase tracking-[0.2em] text-cream">
@@ -62,17 +93,28 @@ function ProductPage() {
       </div>
       <header className="border-b border-gold/15">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3">
-          <Link to="/" className="flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground hover:text-ink">
+          <Link
+            to="/"
+            className="flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground hover:text-ink"
+          >
             <ArrowLeft className="h-4 w-4" /> Accueil
           </Link>
-          <Link to="/"><img src={logo} alt="Logo NOAUMA" width={64} height={64} className="h-16 w-16" /></Link>
+          <Link to="/">
+            <img src={logo} alt="Logo NOAUMA" width={64} height={64} className="h-16 w-16" />
+          </Link>
           <span className="w-20" />
         </div>
       </header>
 
       <main className="mx-auto grid max-w-6xl gap-10 px-5 py-10 md:grid-cols-2 md:py-16">
         <div className="overflow-hidden rounded-3xl shadow-soft">
-          <img src={p.img} alt={p.fr[0]} width={800} height={1000} className="aspect-[4/5] h-full w-full object-cover" />
+          <img
+            src={p.img}
+            alt={p.fr[0]}
+            width={800}
+            height={1000}
+            className="aspect-[4/5] h-full w-full object-cover"
+          />
         </div>
         <div className="flex flex-col justify-center">
           <p className="text-[0.65rem] uppercase tracking-[0.25em] text-gold">NOAUMA · Kenitra</p>
@@ -81,9 +123,21 @@ function ProductPage() {
           <p className="mt-4 text-muted-foreground">{p.fr[1]}</p>
 
           <div className="mt-8 inline-flex w-fit items-center rounded-full border border-gold/40">
-            <button aria-label="Diminuer" onClick={() => setQty((q) => Math.max(1, q - 1))} className="grid h-11 w-11 place-items-center"><Minus className="h-4 w-4" /></button>
+            <button
+              aria-label="Diminuer"
+              onClick={() => setQty((q) => Math.max(1, q - 1))}
+              className="grid h-11 w-11 place-items-center"
+            >
+              <Minus className="h-4 w-4" />
+            </button>
             <span className="w-10 text-center">{qty}</span>
-            <button aria-label="Augmenter" onClick={() => setQty((q) => Math.min(20, q + 1))} className="grid h-11 w-11 place-items-center"><Plus className="h-4 w-4" /></button>
+            <button
+              aria-label="Augmenter"
+              onClick={() => setQty((q) => Math.min(20, q + 1))}
+              className="grid h-11 w-11 place-items-center"
+            >
+              <Plus className="h-4 w-4" />
+            </button>
           </div>
 
           <button onClick={() => setOpen(true)} className="btn-primary mt-6 w-full !py-4">
@@ -91,20 +145,52 @@ function ProductPage() {
           </button>
 
           <ul className="mt-8 space-y-3 text-sm text-muted-foreground">
-            <li className="flex items-center gap-3"><Truck className="h-4 w-4 text-gold" /> Livraison gratuite partout au Maroc</li>
-            <li className="flex items-center gap-3"><Banknote className="h-4 w-4 text-gold" /> Paiement à la livraison</li>
+            <li className="flex items-center gap-3">
+              <Truck className="h-4 w-4 text-gold" /> Livraison gratuite partout au Maroc
+            </li>
+            <li className="flex items-center gap-3">
+              <Banknote className="h-4 w-4 text-gold" /> Paiement à la livraison
+            </li>
           </ul>
         </div>
       </main>
 
-      {open && <OrderModal product={p} qty={qty} onClose={() => setOpen(false)} />}
+      <OrderModal product={p} qty={qty} open={open} onOpenChange={setOpen} />
     </div>
   );
 }
 
-function OrderModal({ product, qty, onClose }: { product: Product; qty: number; onClose: () => void }) {
+// Radix handles Escape, focus trap and scroll lock; the form unmounts (and resets) on close.
+function OrderModal({
+  product,
+  qty,
+  open,
+  onOpenChange,
+}: {
+  product: Product;
+  qty: number;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
+  return (
+    <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
+      <DialogPrimitive.Portal>
+        <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-ink/60" />
+        <DialogPrimitive.Content
+          aria-describedby={undefined}
+          className="fixed left-1/2 top-1/2 z-50 max-h-[92vh] outline-none w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-2xl bg-card p-6 shadow-soft"
+        >
+          <OrderForm product={product} qty={qty} />
+        </DialogPrimitive.Content>
+      </DialogPrimitive.Portal>
+    </DialogPrimitive.Root>
+  );
+}
+
+function OrderForm({ product, qty }: { product: Product; qty: number }) {
   const [form, setForm] = useState({ name: "", phone: "", address: "", city: "" });
   const [errors, setErrors] = useState<Partial<Record<keyof typeof form, string>>>({});
+  const [sentUrl, setSentUrl] = useState<string | null>(null);
   const total = product.price * qty;
 
   const submit = (e: React.FormEvent) => {
@@ -117,62 +203,129 @@ function OrderModal({ product, qty, onClose }: { product: Product; qty: number; 
       return;
     }
     setErrors({});
-    window.open(wa(orderMessage(product, qty, r.data)), "_blank", "noopener,noreferrer");
+    const url = wa(orderMessage(product, qty, r.data));
+    setSentUrl(url);
+    // May be blocked as a popup; the confirmation screen keeps a direct link either way.
+    window.open(url, "_blank", "noopener,noreferrer");
   };
 
-  const fields: { key: keyof typeof form; ph: string; icon: typeof User; type?: string }[] = [
-    { key: "name", ph: "Nom & Prénom", icon: User },
-    { key: "phone", ph: "Téléphone", icon: Phone, type: "tel" },
-    { key: "address", ph: "Adresse complète obligatoire", icon: Home },
-    { key: "city", ph: "Ville", icon: MapPin },
+  if (sentUrl) {
+    return (
+      <div className="text-center">
+        <CircleCheck className="mx-auto h-12 w-12 text-gold" strokeWidth={1.25} />
+        <DialogPrimitive.Title className="mt-4 text-2xl text-ink">
+          Merci pour votre commande
+        </DialogPrimitive.Title>
+        <p className="mt-3 text-sm text-muted-foreground">
+          Envoyez le message préparé sur WhatsApp pour confirmer votre commande. WhatsApp ne s'est
+          pas ouvert ? Utilisez le bouton ci-dessous.
+        </p>
+        <a
+          href={sentUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="btn-primary mt-6 w-full !py-4"
+        >
+          Ouvrir WhatsApp
+        </a>
+        <DialogPrimitive.Close className="mt-4 text-xs uppercase tracking-widest text-muted-foreground hover:text-ink">
+          Fermer
+        </DialogPrimitive.Close>
+      </div>
+    );
+  }
+
+  const fields: {
+    key: keyof typeof form;
+    ph: string;
+    icon: typeof User;
+    type?: string;
+    autoComplete: string;
+  }[] = [
+    { key: "name", ph: "Nom & Prénom", icon: User, autoComplete: "name" },
+    { key: "phone", ph: "Téléphone", icon: Phone, type: "tel", autoComplete: "tel" },
+    {
+      key: "address",
+      ph: "Adresse complète obligatoire",
+      icon: Home,
+      autoComplete: "street-address",
+    },
+    { key: "city", ph: "Ville", icon: MapPin, autoComplete: "address-level2" },
   ];
 
   return (
-    <div className="fixed inset-0 z-50 grid place-items-center bg-ink/60 p-4" onClick={onClose}>
-      <form onSubmit={submit} onClick={(e) => e.stopPropagation()} className="max-h-[92vh] w-full max-w-md overflow-y-auto rounded-2xl bg-card p-6 shadow-soft" role="dialog" aria-modal="true" aria-labelledby="order-title">
-        <div className="mb-5 flex items-center justify-between">
-          <h2 id="order-title" className="text-2xl text-ink">Insérer vos coordonnées</h2>
-          <button type="button" onClick={onClose} aria-label="Fermer"><X className="h-5 w-5" /></button>
-        </div>
+    <form onSubmit={submit} noValidate>
+      <div className="mb-5 flex items-center justify-between">
+        <DialogPrimitive.Title className="text-2xl text-ink">
+          Insérer vos coordonnées
+        </DialogPrimitive.Title>
+        <DialogPrimitive.Close aria-label="Fermer">
+          <X className="h-5 w-5" />
+        </DialogPrimitive.Close>
+      </div>
 
-        <div className="space-y-3">
-          {fields.map(({ key, ph, icon: Icon, type }) => (
-            <div key={key}>
-              <label className="flex overflow-hidden rounded-lg border border-input focus-within:border-gold">
-                <span className="grid w-11 place-items-center bg-cream text-ink"><Icon className="h-4 w-4" /></span>
-                <input
-                  type={type ?? "text"}
-                  placeholder={ph}
-                  aria-label={ph}
-                  value={form[key]}
-                  maxLength={300}
-                  onChange={(e) => setForm({ ...form, [key]: e.target.value })}
-                  className="flex-1 bg-transparent px-3 py-3 text-sm outline-none"
-                />
-              </label>
-              {errors[key] && <p className="mt-1 text-xs text-destructive">{errors[key]}</p>}
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-5 flex items-center gap-3 border-y border-border py-4">
-          <div className="relative">
-            <img src={product.img} alt="" width={56} height={56} className="h-14 w-14 rounded-md object-cover" />
-            <span className="absolute -right-2 -top-2 grid h-5 w-5 place-items-center rounded-full bg-ink text-[0.65rem] text-cream">{qty}</span>
+      <div className="space-y-3">
+        {fields.map(({ key, ph, icon: Icon, type, autoComplete }) => (
+          <div key={key}>
+            <label className="flex overflow-hidden rounded-lg border border-input focus-within:border-gold">
+              <span className="grid w-11 place-items-center bg-cream text-ink">
+                <Icon className="h-4 w-4" />
+              </span>
+              <input
+                type={type ?? "text"}
+                name={key}
+                autoComplete={autoComplete}
+                placeholder={ph}
+                aria-label={ph}
+                value={form[key]}
+                maxLength={300}
+                onChange={(e) => setForm({ ...form, [key]: e.target.value })}
+                className="flex-1 bg-transparent px-3 py-3 text-sm outline-none"
+              />
+            </label>
+            {errors[key] && <p className="mt-1 text-xs text-destructive">{errors[key]}</p>}
           </div>
-          <span className="flex-1 text-sm font-medium text-ink">{product.fr[0]}</span>
-          <span className="text-sm font-medium">{total} dh</span>
-        </div>
+        ))}
+      </div>
 
-        <div className="mt-4 space-y-2 rounded-lg bg-cream p-4 text-sm">
-          <div className="flex justify-between"><span>Sous-total</span><span>{total} dh</span></div>
-          <div className="flex justify-between"><span>Livraison</span><span className="font-medium">Gratuit</span></div>
-          <div className="flex justify-between border-t border-border pt-2 font-medium text-ink"><span>Total</span><span className="font-serif text-xl">{total} dh</span></div>
+      <div className="mt-5 flex items-center gap-3 border-y border-border py-4">
+        <div className="relative">
+          <img
+            src={product.img}
+            alt=""
+            width={56}
+            height={56}
+            className="h-14 w-14 rounded-md object-cover"
+          />
+          <span className="absolute -right-2 -top-2 grid h-5 w-5 place-items-center rounded-full bg-ink text-[0.65rem] text-cream">
+            {qty}
+          </span>
         </div>
+        <span className="flex-1 text-sm font-medium text-ink">{product.fr[0]}</span>
+        <span className="text-sm font-medium">{total} dh</span>
+      </div>
 
-        <button type="submit" className="btn-primary mt-5 w-full !py-4">Acheter maintenant</button>
-        <p className="mt-3 text-center text-xs text-muted-foreground">Votre commande sera envoyée sur WhatsApp pour confirmation.</p>
-      </form>
-    </div>
+      <div className="mt-4 space-y-2 rounded-lg bg-cream p-4 text-sm">
+        <div className="flex justify-between">
+          <span>Sous-total</span>
+          <span>{total} dh</span>
+        </div>
+        <div className="flex justify-between">
+          <span>Livraison</span>
+          <span className="font-medium">Gratuit</span>
+        </div>
+        <div className="flex justify-between border-t border-border pt-2 font-medium text-ink">
+          <span>Total</span>
+          <span className="font-serif text-xl">{total} dh</span>
+        </div>
+      </div>
+
+      <button type="submit" className="btn-primary mt-5 w-full !py-4">
+        Acheter maintenant
+      </button>
+      <p className="mt-3 text-center text-xs text-muted-foreground">
+        Votre commande sera envoyée sur WhatsApp pour confirmation.
+      </p>
+    </form>
   );
 }

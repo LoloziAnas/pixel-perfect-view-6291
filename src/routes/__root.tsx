@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { SITE_URL } from "../lib/products";
 
 function NotFoundComponent() {
   return (
@@ -79,7 +80,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { property: "og:type", content: "website" },
+      { property: "og:site_name", content: "NOAUMA" },
+      { property: "og:image", content: `${SITE_URL}/og-image.jpg` },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: `${SITE_URL}/og-image.jpg` },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
@@ -100,9 +104,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="fr" dir="ltr">
       <head>
         <HeadContent />
+        <noscript>
+          <style>{".reveal{opacity:1;transform:none;animation:none}"}</style>
+        </noscript>
       </head>
       <body>
         {children}
