@@ -4,7 +4,11 @@ import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { z } from "zod";
 import {
   ArrowLeft,
+  ArrowRight,
   CircleCheck,
+  Lock,
+  ShieldCheck,
+  Truck,
   Home,
   MapPin,
   MessageSquare,
@@ -342,20 +346,43 @@ function OrderForm({ items, fromCart }: { items: CartItem[]; fromCart: boolean }
     { key: "notes", ph: s.notes, icon: MessageSquare, autoComplete: "off" },
   ];
 
+  const total = orderTotal(lines);
   return (
-    <form onSubmit={submit} noValidate>
-      <div className="mb-5 flex items-center justify-between">
-        <DialogPrimitive.Title className="text-2xl text-ink">{s.formTitle}</DialogPrimitive.Title>
-        <DialogPrimitive.Close aria-label={s.close}>
-          <X className="h-5 w-5" />
-        </DialogPrimitive.Close>
+    <form onSubmit={submit} noValidate className="relative">
+      <DialogPrimitive.Close
+        aria-label={s.close}
+        className="absolute -end-1 -top-1 text-ink/70 hover:text-ink"
+      >
+        <X className="h-5 w-5" />
+      </DialogPrimitive.Close>
+
+      <div className="flex flex-col items-center text-center">
+        <img src={logo} alt="Logo NOAUMA" width={80} height={80} className="h-20 w-20" />
+        <p className="mt-1 text-[0.6rem] uppercase tracking-[0.3em] text-gold">{s.tagline}</p>
+        <div className="mt-4 flex w-full items-center gap-3">
+          <span className="h-px flex-1 bg-gold/40" />
+          <DialogPrimitive.Title className="text-2xl uppercase tracking-[0.12em] text-rose-deep">
+            {s.formTitle}
+          </DialogPrimitive.Title>
+          <span className="h-px flex-1 bg-gold/40" />
+        </div>
+        <p className="mt-2 text-xs text-muted-foreground">{s.formSub}</p>
       </div>
 
-      <div className="space-y-3">
+      <div className="mt-6 flex items-center gap-3">
+        <span className="grid h-9 w-9 place-items-center rounded-full bg-rose/20 text-rose-deep">
+          <User className="h-4 w-4" />
+        </span>
+        <h3 className="font-serif text-xl text-ink">{s.yourInfo}</h3>
+      </div>
+
+      <div className="mt-3 space-y-3">
         {fields.map(({ key, ph, icon: Icon, type, autoComplete }) => (
           <div key={key}>
-            <label className="flex overflow-hidden rounded-lg border border-input focus-within:border-gold">
-              <span className="grid w-11 shrink-0 place-items-center bg-cream text-ink">
+            <label
+              className={`flex items-center gap-1 rounded-xl border bg-background px-2 transition-colors focus-within:border-rose-deep ${errors[key] ? "border-destructive" : "border-gold/30"}`}
+            >
+              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-cream text-rose-deep">
                 <Icon className="h-4 w-4" />
               </span>
               <input
@@ -363,12 +390,12 @@ function OrderForm({ items, fromCart }: { items: CartItem[]; fromCart: boolean }
                 name={key}
                 dir={type === "tel" ? "ltr" : undefined}
                 autoComplete={autoComplete}
-                placeholder={ph}
+                placeholder={key === "notes" ? ph : `${ph} *`}
                 aria-label={ph}
                 value={form[key]}
                 maxLength={300}
                 onChange={(e) => setForm({ ...form, [key]: e.target.value })}
-                className="min-w-0 flex-1 bg-transparent px-3 py-3 text-sm outline-none rtl:text-right"
+                className="min-w-0 flex-1 bg-transparent px-2 py-3 text-sm outline-none rtl:text-right"
               />
             </label>
             {errors[key] && <p className="mt-1 text-xs text-destructive">{errors[key]}</p>}
@@ -376,35 +403,78 @@ function OrderForm({ items, fromCart }: { items: CartItem[]; fromCart: boolean }
         ))}
       </div>
 
-      <ul className="mt-5 divide-y divide-border border-y border-border">
-        {lines.map(({ product, qty }) => (
-          <li key={product.slug} className="flex items-center gap-3 py-3">
-            <div className="relative shrink-0">
+      <div className="mt-6 rounded-2xl border border-gold/20 bg-background p-4 shadow-soft">
+        <div className="flex items-center gap-3">
+          <span className="grid h-9 w-9 place-items-center rounded-full bg-rose/20 text-rose-deep">
+            <ShoppingBag className="h-4 w-4" />
+          </span>
+          <h3 className="font-serif text-xl text-ink">{s.yourOrder}</h3>
+        </div>
+        <ul className="mt-3 divide-y divide-border">
+          {lines.map(({ product, qty }) => (
+            <li key={product.slug} className="flex items-center gap-3 py-3">
               <img
                 src={product.img}
                 alt=""
-                width={56}
-                height={56}
-                className="h-14 w-14 rounded-md object-cover"
+                width={80}
+                height={80}
+                className="h-20 w-20 shrink-0 rounded-lg object-cover"
               />
-              <span className="absolute -end-2 -top-2 grid h-5 w-5 place-items-center rounded-full bg-ink text-[0.65rem] text-cream">
-                {qty}
+              <div className="flex-1">
+                <p className="font-serif text-lg leading-tight text-rose-deep">{product[lang][0]}</p>
+                <span className="mt-1 inline-block rounded-full bg-cream px-2.5 py-0.5 text-[0.7rem] text-ink">
+                  × {qty}
+                </span>
+              </div>
+              <span className="font-serif text-lg text-ink">
+                {product.price * qty} {s.mad}
               </span>
-            </div>
-            <span className="flex-1 text-sm font-medium text-ink">{product[lang][0]}</span>
-            <span className="text-sm font-medium">
-              {product.price * qty} {s.mad}
+            </li>
+          ))}
+        </ul>
+        <div className="mt-2 space-y-2 border-t border-border pt-3 text-sm">
+          <div className="flex justify-between">
+            <span>{s.subtotal}</span>
+            <span>
+              {total} {s.mad}
             </span>
-          </li>
-        ))}
-      </ul>
-
-      <div className="mt-4">
-        <Totals total={orderTotal(lines)} s={s} />
+          </div>
+          <div className="flex justify-between">
+            <span>{s.delivery}</span>
+            <span className="font-medium text-rose-deep">{s.free}</span>
+          </div>
+        </div>
+        <div className="mt-3 flex items-center justify-between rounded-xl bg-rose/15 px-4 py-3 font-serif text-ink">
+          <span className="text-xl">{s.total}</span>
+          <span className="text-2xl text-rose-deep">
+            {total} {s.mad}
+          </span>
+        </div>
       </div>
 
-      <button type="submit" className="btn-primary mt-5 w-full !py-4">
-        {s.submit}
+      <div className="mt-5 grid grid-cols-3 gap-2 text-center text-[0.65rem] leading-snug text-muted-foreground">
+        {[
+          [Truck, s.trustShip],
+          [ShieldCheck, s.trustPay],
+          [Lock, s.trustSafe],
+        ].map(([I, label]) => {
+          const Ic = I as typeof Truck;
+          return (
+            <div key={label as string} className="flex flex-col items-center gap-1.5">
+              <span className="grid h-9 w-9 place-items-center rounded-full bg-cream text-rose-deep">
+                <Ic className="h-4 w-4" />
+              </span>
+              {label as string}
+            </div>
+          );
+        })}
+      </div>
+
+      <button
+        type="submit"
+        className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-rose-deep py-4 text-xs uppercase tracking-[0.18em] text-primary-foreground shadow-soft transition hover:-translate-y-0.5 hover:opacity-95"
+      >
+        {s.submit} <ArrowRight className="h-4 w-4 rtl:rotate-180" />
       </button>
       <p className="mt-3 text-center text-xs text-muted-foreground">{s.sendNote}</p>
     </form>
