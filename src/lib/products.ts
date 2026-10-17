@@ -5,8 +5,8 @@ import p4 from "@/assets/p4.jpg";
 import p5 from "@/assets/p5.jpg";
 import about from "@/assets/about.jpg";
 
-// Absolute origin for share previews (og:image must be a full URL). Update if a custom domain is added.
-export const SITE_URL = "https://pixel-perfect-view-6291.lovable.app";
+// Absolute origin for share previews (og:image must be a full URL).
+export const SITE_URL = "https://www.noauma.ma";
 
 export const PHONE = "212674427340";
 export const wa = (msg: string) => `https://wa.me/${PHONE}?text=${encodeURIComponent(msg)}`;

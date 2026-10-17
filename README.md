@@ -34,7 +34,8 @@ Checkout sends each order to a Google Apps Script web app, which adds a row to a
    [`scripts/orders-google-sheet.gs`](scripts/orders-google-sheet.gs), and set `SECRET` to a long
    random password.
 2. **Deploy → New deployment → Web app**, execute as *Me*, access *Anyone*. Copy the URL.
-3. Set two server secrets in the hosting environment (Lovable project settings):
+3. In Vercel → Project → **Settings → Environment Variables**, add (Production and Preview),
+   then redeploy:
    - `ORDERS_WEBHOOK_URL`: the web app URL
    - `ORDERS_WEBHOOK_SECRET`: the same password as `SECRET`
 
