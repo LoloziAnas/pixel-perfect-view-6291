@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Truck,
   Banknote,
@@ -244,7 +244,18 @@ function SectionHead({ tag, title }: { tag: string; title: string }) {
 function Index() {
   const [lang, setLang] = useLang();
   const [open, setOpen] = useState(false);
+  // On phones the floating button would cover the hero trust bar; hide it while that bar is on screen.
+  const trustRef = useRef<HTMLDivElement>(null);
+  const [overTrust, setOverTrust] = useState(true);
   const c = t[lang];
+
+  useEffect(() => {
+    const el = trustRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => setOverTrust(!!e?.isIntersecting));
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
 
   // Re-run on language change: elements keyed by translated text (reviews) remount without "in".
   useEffect(() => {
@@ -377,7 +388,7 @@ function Index() {
           </div>
         </div>
 
-        <div className="hero-trust absolute inset-x-0 bottom-0 z-20">
+        <div ref={trustRef} className="hero-trust absolute inset-x-0 bottom-0 z-20">
           <div className="mx-auto grid max-w-[1440px] grid-cols-2 gap-x-4 gap-y-5 px-6 pb-7 pt-12 md:grid-cols-4 md:px-12 md:pb-9 lg:px-24">
             {[Truck, Banknote, Gem, RefreshCw].map((Icon, i) => (
               <div
@@ -655,7 +666,7 @@ function Index() {
         target="_blank"
         rel="noopener noreferrer"
         aria-label="WhatsApp"
-        className="fixed bottom-5 right-5 z-50 grid h-14 w-14 place-items-center rounded-full bg-rose-deep text-primary-foreground shadow-soft transition-transform hover:scale-105"
+        className={`fixed bottom-5 right-5 z-50 grid h-14 w-14 place-items-center rounded-full bg-rose-deep text-primary-foreground shadow-soft transition-[opacity,transform] duration-300 hover:scale-105 ${overTrust ? "max-md:pointer-events-none max-md:translate-y-4 max-md:opacity-0" : ""}`}
       >
         <WaIcon className="h-7 w-7" />
       </a>
