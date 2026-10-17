@@ -1,4 +1,5 @@
 import type { Lang } from "@/lib/lang";
+import { sizeInfo, type SizeId } from "@/lib/products";
 
 // Copy for the product page, cart and checkout (the home page keeps its own dictionary).
 const fr = {
@@ -11,6 +12,16 @@ const fr = {
   mad: "MAD",
   decrease: "Diminuer",
   increase: "Augmenter",
+  size: "Taille",
+  bedFor: (bed: string) => `lit ${bed}`,
+  oneSize: "Taille unique",
+  from: "Dès",
+  sizeGuide: "Guide des tailles",
+  guideSize: "Taille",
+  guideBed: "Lit (cm)",
+  guideBedspread: "Couvre-lit (cm)",
+  guideDuvet: "Housse de couette (cm)",
+  guideNote: "Dimensions indicatives. Un doute sur la taille ? Écrivez-nous sur WhatsApp.",
   addToCart: "Ajouter au panier",
   buyNow: "Acheter maintenant",
   related: "Vous aimerez aussi",
@@ -60,6 +71,17 @@ export const shopText: Record<Lang, ShopText> = {
     mad: "درهم",
     decrease: "إنقاص",
     increase: "زيادة",
+    size: "المقاس",
+    // LRI/PDI keep "140×190" in reading order inside Arabic text.
+    bedFor: (bed: string) => `سرير \u2066${bed}\u2069`,
+    oneSize: "مقاس موحد",
+    from: "ابتداءً من",
+    sizeGuide: "دليل المقاسات",
+    guideSize: "المقاس",
+    guideBed: "السرير (سم)",
+    guideBedspread: "غطاء السرير (سم)",
+    guideDuvet: "غطاء اللحاف (سم)",
+    guideNote: "مقاسات تقريبية. عندك شك في المقاس؟ راسلينا عبر واتساب.",
     addToCart: "أضيفي إلى السلة",
     buyNow: "اشتري الآن",
     related: "قد يعجبك أيضاً",
@@ -94,4 +116,9 @@ export const shopText: Record<Lang, ShopText> = {
     notFound: "المنتج غير موجود",
     backHome: "العودة إلى الرئيسية",
   },
+};
+
+export const sizeLabel = (id: SizeId, lang: Lang) => {
+  const size = sizeInfo(id);
+  return `${size[lang]} · ${shopText[lang].bedFor(size.bed)}`;
 };
