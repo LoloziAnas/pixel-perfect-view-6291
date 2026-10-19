@@ -316,7 +316,7 @@ function OrderForm({ items, fromCart }: { items: CartItem[]; fromCart: boolean }
     try {
       const { id } = await placeOrder({
         data: {
-          items: items.map(({ slug, qty }) => ({ slug, qty })),
+          items: items.map(({ slug, qty, color, size }) => ({ slug, qty, color, size })),
           customer: r.data,
           lang,
           website: honeypot,
@@ -428,10 +428,13 @@ function OrderForm({ items, fromCart }: { items: CartItem[]; fromCart: boolean }
           <h3 className="font-serif text-xl text-ink">{s.yourOrder}</h3>
         </div>
         <ul className="mt-3 divide-y divide-border">
-          {lines.map(({ product, qty }) => (
-            <li key={product.slug} className="flex items-center gap-3 py-3">
+          {lines.map((line) => {
+            const { product, qty } = line;
+            const variant = variantText(line, lang);
+            return (
+            <li key={itemKey(line)} className="flex items-center gap-3 py-3">
               <img
-                src={product.img}
+                src={product.colors?.find((c) => c.id === line.color)?.imgs[0] ?? product.img}
                 alt=""
                 width={80}
                 height={80}
@@ -441,7 +444,9 @@ function OrderForm({ items, fromCart }: { items: CartItem[]; fromCart: boolean }
                 <p className="font-serif text-xl leading-tight text-rose-deep">
                   {product[lang][0]}
                 </p>
-                <p className="mt-1 text-xs text-muted-foreground">{product[lang][1]}</p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {variant ? `${variant} — ${product[lang][1]}` : product[lang][1]}
+                </p>
                 <span className="mt-2 inline-block rounded-md bg-rose/20 px-2.5 py-1 text-[0.7rem] text-rose-deep">
                   {s.qtyLabel} : {qty}
                 </span>
