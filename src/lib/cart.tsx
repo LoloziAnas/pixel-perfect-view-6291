@@ -11,7 +11,7 @@ import { colorById, products } from "@/lib/products";
 
 export const MAX_QTY = 20;
 
-export type CartItem = { slug: string; qty: number; color?: string; size?: string };
+export type CartItem = { slug: string; qty: number; color?: string | undefined; size?: string | undefined };
 type Checkout = { items: CartItem[]; fromCart: boolean } | null;
 
 type CartContextValue = {

@@ -113,7 +113,12 @@ export const productBySlug = (slug: string) => products.find((p) => p.slug === s
 export const colorById = (p: Product, id: string | undefined) =>
   p.colors?.find((c) => c.id === id) ?? p.colors?.[0];
 
-export type OrderLine = { product: Product; qty: number; color?: string; size?: string };
+export type OrderLine = {
+  product: Product;
+  qty: number;
+  color?: string | undefined;
+  size?: string | undefined;
+};
 export type OrderInfo = {
   name: string;
   phone: string;
