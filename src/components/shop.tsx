@@ -237,7 +237,8 @@ export function CartDrawer() {
                       </div>
                     </div>
                   </li>
-                ))}
+                  );
+                })}
               </ul>
               <div className="border-t border-gold/15 p-5">
                 <Totals total={orderTotal(lines)} s={s} />
