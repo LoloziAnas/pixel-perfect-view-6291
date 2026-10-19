@@ -31,7 +31,8 @@ type CartContextValue = {
 const KEY = "noauma-cart";
 const clamp = (n: number) => Math.min(MAX_QTY, Math.max(1, Math.round(n)));
 // Same product in two colors or sizes is two cart lines.
-export const itemKey = (i: CartItem) => `${i.slug}|${i.color ?? ""}|${i.size ?? ""}`;
+export const itemKey = (i: { slug: string; color?: string | undefined; size?: string | undefined }) =>
+  `${i.slug}|${i.color ?? ""}|${i.size ?? ""}`;
 
 const CartContext = createContext<CartContextValue | null>(null);
 
