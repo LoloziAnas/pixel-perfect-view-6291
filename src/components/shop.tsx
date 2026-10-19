@@ -455,7 +455,8 @@ function OrderForm({ items, fromCart }: { items: CartItem[]; fromCart: boolean }
                 {product.price * qty} {s.mad}
               </span>
             </li>
-          ))}
+            );
+          })}
         </ul>
         <div className="mt-2 space-y-2 border-t border-border pt-3 text-sm">
           <div className="flex justify-between">
