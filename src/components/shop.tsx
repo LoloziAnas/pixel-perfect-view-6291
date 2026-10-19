@@ -19,7 +19,7 @@ import {
   X,
 } from "lucide-react";
 import logo from "@/assets/logo.webp";
-import { MAX_QTY, useCart, type CartItem } from "@/lib/cart";
+import { itemKey, MAX_QTY, useCart, type CartItem } from "@/lib/cart";
 import { useLang } from "@/lib/lang";
 import { makeCustomerSchema } from "@/lib/order-schema";
 import { placeOrder } from "@/lib/orders";
@@ -34,8 +34,14 @@ function useText() {
 const toLines = (items: CartItem[]): OrderLine[] =>
   items.flatMap((i) => {
     const product = productBySlug(i.slug);
-    return product ? [{ product, qty: i.qty }] : [];
+    return product ? [{ product, qty: i.qty, color: i.color, size: i.size }] : [];
   });
+
+// Localized color/size summary for a cart or checkout line, e.g. "Rose pêche · 2m × 1,40m".
+function variantText(line: OrderLine, lang: "fr" | "ar") {
+  const color = line.product.colors?.find((c) => c.id === line.color);
+  return [color?.[lang], line.size].filter(Boolean).join(" · ");
+}
 
 export function QtyStepper({
   value,
@@ -191,10 +197,14 @@ export function CartDrawer() {
           ) : (
             <>
               <ul className="flex-1 divide-y divide-border overflow-y-auto px-5">
-                {lines.map(({ product, qty }) => (
-                  <li key={product.slug} className="flex gap-4 py-4">
+                {lines.map((line) => {
+                  const { product, qty } = line;
+                  const key = itemKey(line);
+                  const variant = variantText(line, lang);
+                  return (
+                  <li key={key} className="flex gap-4 py-4">
                     <img
-                      src={product.img}
+                      src={product.colors?.find((c) => c.id === line.color)?.imgs[0] ?? product.img}
                       alt=""
                       width={72}
                       height={90}
@@ -204,10 +214,15 @@ export function CartDrawer() {
                       <div className="flex items-start justify-between gap-2">
                         <span className="font-serif text-lg leading-tight text-ink">
                           {product[lang][0]}
+                          {variant && (
+                            <span className="block text-xs font-normal text-muted-foreground">
+                              {variant}
+                            </span>
+                          )}
                         </span>
                         <button
                           type="button"
-                          onClick={() => remove(product.slug)}
+                          onClick={() => remove(key)}
                           aria-label={`${s.remove} ${product[lang][0]}`}
                           className="text-muted-foreground hover:text-destructive"
                         >
@@ -215,7 +230,7 @@ export function CartDrawer() {
                         </button>
                       </div>
                       <div className="mt-auto flex items-center justify-between pt-2">
-                        <QtyStepper small value={qty} onChange={(n) => setQty(product.slug, n)} />
+                        <QtyStepper small value={qty} onChange={(n) => setQty(key, n)} />
                         <span className="text-sm font-medium">
                           {product.price * qty} {s.mad}
                         </span>
