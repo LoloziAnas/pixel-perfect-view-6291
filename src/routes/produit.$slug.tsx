@@ -68,7 +68,14 @@ function ProductView({ p }: { p: Product }) {
   const s = shopText[lang];
   const { add, setDrawerOpen, startCheckout } = useCart();
   const [qty, setQty] = useState(1);
+  const [colorId, setColorId] = useState(p.colors?.[0]?.id);
+  const [size, setSize] = useState(p.sizes?.[0]);
+  const [imgIdx, setImgIdx] = useState(0);
   const [name, desc] = p[lang];
+
+  const color = p.colors?.find((c) => c.id === colorId) ?? p.colors?.[0];
+  const gallery = color?.imgs ?? [p.img];
+  const shown = gallery[Math.min(imgIdx, gallery.length - 1)]!;
 
   const i = products.indexOf(p);
   const related = [1, 2, 3].map((k) => products[(i + k) % products.length]!);
@@ -78,14 +85,39 @@ function ProductView({ p }: { p: Product }) {
       <ShopHeader />
 
       <main className="mx-auto grid max-w-6xl gap-10 px-5 py-10 md:grid-cols-2 md:py-16">
-        <div className="overflow-hidden rounded-3xl shadow-soft">
-          <img
-            src={p.img}
-            alt={name}
-            width={800}
-            height={1000}
-            className="aspect-[4/5] h-full w-full object-cover"
-          />
+        <div>
+          <div className="overflow-hidden rounded-3xl shadow-soft">
+            <img
+              src={shown}
+              alt={color ? `${name} — ${color[lang]}` : name}
+              width={800}
+              height={1000}
+              className="aspect-[4/5] h-full w-full object-cover"
+            />
+          </div>
+          {gallery.length > 1 && (
+            <div className="mt-3 grid grid-cols-2 gap-3">
+              {gallery.map((src, idx) => (
+                <button
+                  key={src}
+                  type="button"
+                  onClick={() => setImgIdx(idx)}
+                  aria-label={`${name} — photo ${idx + 1}`}
+                  className={`overflow-hidden rounded-2xl border-2 transition-colors ${
+                    idx === imgIdx ? "border-rose-deep" : "border-transparent"
+                  }`}
+                >
+                  <img
+                    src={src}
+                    alt=""
+                    width={200}
+                    height={250}
+                    className="aspect-[4/5] h-full w-full object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
         <div className="flex flex-col justify-center">
           <p className="text-[0.65rem] uppercase tracking-[0.25em] text-gold">NOAUMA · Kenitra</p>
@@ -95,6 +127,59 @@ function ProductView({ p }: { p: Product }) {
           </p>
           <p className="mt-4 text-muted-foreground">{desc}</p>
 
+          {p.colors && (
+            <div className="mt-8">
+              <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                {s.colorLabel} : <span className="text-ink">{color?.[lang]}</span>
+              </p>
+              <div className="mt-3 flex flex-wrap gap-3">
+                {p.colors.map((c) => (
+                  <button
+                    key={c.id}
+                    type="button"
+                    onClick={() => {
+                      setColorId(c.id);
+                      setImgIdx(0);
+                    }}
+                    aria-label={c[lang]}
+                    title={c[lang]}
+                    className={`h-14 w-14 overflow-hidden rounded-full border-2 transition-all ${
+                      c.id === color?.id
+                        ? "scale-110 border-rose-deep shadow-soft"
+                        : "border-gold/30 hover:border-rose-deep/60"
+                    }`}
+                  >
+                    <img src={c.imgs[0]} alt="" className="h-full w-full object-cover" />
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {p.sizes && (
+            <div className="mt-6">
+              <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                {s.sizeLabel}
+              </p>
+              <div className="mt-3 flex flex-wrap gap-3">
+                {p.sizes.map((sz) => (
+                  <button
+                    key={sz}
+                    type="button"
+                    onClick={() => setSize(sz)}
+                    className={`rounded-full border px-5 py-2.5 text-sm transition-colors ${
+                      sz === size
+                        ? "border-rose-deep bg-rose-deep text-primary-foreground"
+                        : "border-gold/40 text-ink hover:border-rose-deep/60"
+                    }`}
+                  >
+                    {sz}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="mt-8">
             <QtyStepper value={qty} onChange={setQty} />
           </div>
@@ -103,7 +188,7 @@ function ProductView({ p }: { p: Product }) {
             <button
               type="button"
               onClick={() => {
-                add(p.slug, qty);
+                add({ slug: p.slug, qty, color: color?.id, size });
                 setDrawerOpen(true);
               }}
               className="btn-ghost !py-4 text-rose-deep"
@@ -112,7 +197,9 @@ function ProductView({ p }: { p: Product }) {
             </button>
             <button
               type="button"
-              onClick={() => startCheckout([{ slug: p.slug, qty }], false)}
+              onClick={() =>
+                startCheckout([{ slug: p.slug, qty, color: color?.id, size }], false)
+              }
               className="btn-primary !py-4"
             >
               <Zap className="h-4 w-4" /> {s.buyNow}

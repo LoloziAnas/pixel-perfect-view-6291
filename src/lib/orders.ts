@@ -26,7 +26,9 @@ export const placeOrder = createServerFn({ method: "POST" })
     const lines: OrderLine[] = data.items.map((i) => {
       const product = productBySlug(i.slug);
       if (!product) throw new Error(`Unknown product: ${i.slug}`);
-      return { product, qty: i.qty };
+      const color = product.colors?.find((c) => c.id === i.color)?.fr;
+      const size = product.sizes?.includes(i.size ?? "") ? i.size : undefined;
+      return { product, qty: i.qty, color, size };
     });
 
     const url = process.env["ORDERS_WEBHOOK_URL"];
@@ -47,7 +49,12 @@ export const placeOrder = createServerFn({ method: "POST" })
         address: c.address,
         city: c.city,
         notes: c.notes,
-        itemsText: lines.map((l) => `${l.product.fr[0]} × ${l.qty}`).join("\n"),
+        itemsText: lines
+          .map(
+            (l) =>
+              `${l.product.fr[0]}${l.color ? ` (${l.color})` : ""}${l.size ? ` — ${l.size}` : ""} × ${l.qty}`,
+          )
+          .join("\n"),
         total: orderTotal(lines),
         message: orderMessage(lines, c, id),
       }),
