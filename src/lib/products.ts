@@ -1,9 +1,16 @@
-import p1 from "@/assets/p1.jpg";
 import p2 from "@/assets/p2.jpg";
 import p3 from "@/assets/p3.jpg";
 import p4 from "@/assets/p4.jpg";
 import p5 from "@/assets/p5.jpg";
 import about from "@/assets/about.jpg";
+import sultanPeche1 from "@/assets/sultan-peche-1.jpg.asset.json";
+import sultanPeche2 from "@/assets/sultan-peche-2.jpg.asset.json";
+import sultanCreme1 from "@/assets/sultan-creme-1.jpg.asset.json";
+import sultanCreme2 from "@/assets/sultan-creme-2.jpg.asset.json";
+import sultanBleu1 from "@/assets/sultan-bleu-1.jpg.asset.json";
+import sultanBleu2 from "@/assets/sultan-bleu-2.jpg.asset.json";
+import sultanRose1 from "@/assets/sultan-rose-1.jpg.asset.json";
+import sultanRose2 from "@/assets/sultan-rose-2.jpg.asset.json";
 
 // Absolute origin for share previews (og:image must be a full URL).
 export const SITE_URL = "https://www.noauma.ma";
@@ -11,21 +18,58 @@ export const SITE_URL = "https://www.noauma.ma";
 export const PHONE = "212674427340";
 export const wa = (msg: string) => `https://wa.me/${PHONE}?text=${encodeURIComponent(msg)}`;
 
+export type ProductColor = {
+  id: string;
+  fr: string;
+  ar: string;
+  // Two photos per color: the boxed set, then the bedroom scene.
+  imgs: [string, string];
+};
+
 export type Product = {
   slug: string;
   img: string;
   price: number;
   fr: [string, string];
   ar: [string, string];
+  colors?: ProductColor[];
+  sizes?: string[];
 };
 
 export const products: Product[] = [
   {
-    slug: "velours-ivoire",
-    img: p1,
-    price: 890,
-    fr: ["Velours Ivoire", "Velours doux bordé d'un galon doré."],
-    ar: ["مخمل عاجي", "مخمل ناعم بحواف ذهبية."],
+    slug: "sultan-velvet",
+    img: sultanPeche2.url,
+    price: 370,
+    fr: ["Sultan Velvet", "Couverture velours double face, 3 pièces avec taies."],
+    ar: ["سلطان فيلفيت", "بطانية مخمل بوجهين، 3 قطع مع أكياس وسائد."],
+    colors: [
+      {
+        id: "rose-peche",
+        fr: "Rose pêche",
+        ar: "وردي خوخي",
+        imgs: [sultanPeche1.url, sultanPeche2.url],
+      },
+      {
+        id: "creme-elegant",
+        fr: "Crème élégant",
+        ar: "كريمي أنيق",
+        imgs: [sultanCreme1.url, sultanCreme2.url],
+      },
+      {
+        id: "bleu-clair",
+        fr: "Bleu clair",
+        ar: "أزرق فاتح",
+        imgs: [sultanBleu1.url, sultanBleu2.url],
+      },
+      {
+        id: "rose-poudre",
+        fr: "Rose poudré",
+        ar: "وردي بودرة",
+        imgs: [sultanRose1.url, sultanRose2.url],
+      },
+    ],
+    sizes: ["2m × 1,40m", "2m × 1,60m"],
   },
   {
     slug: "matelasse-rose",
@@ -66,7 +110,10 @@ export const products: Product[] = [
 
 export const productBySlug = (slug: string) => products.find((p) => p.slug === slug);
 
-export type OrderLine = { product: Product; qty: number };
+export const colorById = (p: Product, id: string | undefined) =>
+  p.colors?.find((c) => c.id === id) ?? p.colors?.[0];
+
+export type OrderLine = { product: Product; qty: number; color?: string; size?: string };
 export type OrderInfo = {
   name: string;
   phone: string;
@@ -83,7 +130,10 @@ export function orderMessage(lines: OrderLine[], info: OrderInfo, id: string) {
   return [
     `Nouvelle commande ${id}`,
     "",
-    ...lines.map((l) => `• ${l.product.fr[0]} × ${l.qty} — ${l.product.price * l.qty} MAD`),
+    ...lines.map(
+      (l) =>
+        `• ${l.product.fr[0]}${l.color ? ` (${l.color})` : ""}${l.size ? ` — ${l.size}` : ""} × ${l.qty} — ${l.product.price * l.qty} MAD`,
+    ),
     `Total : ${orderTotal(lines)} MAD (livraison gratuite)`,
     "",
     `Nom : ${info.name}`,
