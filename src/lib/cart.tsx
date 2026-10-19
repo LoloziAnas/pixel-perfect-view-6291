@@ -7,19 +7,19 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { products } from "@/lib/products";
+import { colorById, products } from "@/lib/products";
 
 export const MAX_QTY = 20;
 
-export type CartItem = { slug: string; qty: number };
+export type CartItem = { slug: string; qty: number; color?: string; size?: string };
 type Checkout = { items: CartItem[]; fromCart: boolean } | null;
 
 type CartContextValue = {
   items: CartItem[];
   count: number;
-  add: (slug: string, qty: number) => void;
-  setQty: (slug: string, qty: number) => void;
-  remove: (slug: string) => void;
+  add: (item: CartItem) => void;
+  setQty: (key: string, qty: number) => void;
+  remove: (key: string) => void;
   clear: () => void;
   drawerOpen: boolean;
   setDrawerOpen: (open: boolean) => void;
@@ -30,6 +30,8 @@ type CartContextValue = {
 
 const KEY = "noauma-cart";
 const clamp = (n: number) => Math.min(MAX_QTY, Math.max(1, Math.round(n)));
+// Same product in two colors or sizes is two cart lines.
+export const itemKey = (i: CartItem) => `${i.slug}|${i.color ?? ""}|${i.size ?? ""}`;
 
 const CartContext = createContext<CartContextValue | null>(null);
 
@@ -38,13 +40,18 @@ function load(): CartItem[] {
     const raw: unknown = JSON.parse(localStorage.getItem(KEY) ?? "[]");
     if (!Array.isArray(raw)) return [];
     // Drop anything stale or tampered with: unknown products, bad quantities.
-    return raw.flatMap((i: Partial<CartItem>) =>
-      typeof i?.slug === "string" &&
-      typeof i.qty === "number" &&
-      products.some((p) => p.slug === i.slug)
-        ? [{ slug: i.slug, qty: clamp(i.qty) }]
-        : [],
-    );
+    return raw.flatMap((i: Partial<CartItem>) => {
+      if (typeof i?.slug !== "string" || typeof i.qty !== "number") return [];
+      const p = products.find((p) => p.slug === i.slug);
+      if (!p) return [];
+      const color =
+        typeof i.color === "string" && p.colors?.some((c) => c.id === i.color)
+          ? i.color
+          : undefined;
+      const size =
+        typeof i.size === "string" && p.sizes?.includes(i.size) ? i.size : undefined;
+      return [{ slug: i.slug, qty: clamp(i.qty), color, size }];
+    });
   } catch {
     return [];
   }
@@ -75,15 +82,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
     () => ({
       items,
       count: items.reduce((n, i) => n + i.qty, 0),
-      add: (slug, qty) =>
-        setItems((cur) =>
-          cur.some((i) => i.slug === slug)
-            ? cur.map((i) => (i.slug === slug ? { ...i, qty: clamp(i.qty + qty) } : i))
-            : [...cur, { slug, qty: clamp(qty) }],
-        ),
-      setQty: (slug, qty) =>
-        setItems((cur) => cur.map((i) => (i.slug === slug ? { ...i, qty: clamp(qty) } : i))),
-      remove: (slug) => setItems((cur) => cur.filter((i) => i.slug !== slug)),
+      add: (item) =>
+        setItems((cur) => {
+          const k = itemKey(item);
+          return cur.some((i) => itemKey(i) === k)
+            ? cur.map((i) => (itemKey(i) === k ? { ...i, qty: clamp(i.qty + item.qty) } : i))
+            : [...cur, { ...item, qty: clamp(item.qty) }];
+        }),
+      setQty: (key, qty) =>
+        setItems((cur) => cur.map((i) => (itemKey(i) === key ? { ...i, qty: clamp(qty) } : i))),
+      remove: (key) => setItems((cur) => cur.filter((i) => itemKey(i) !== key)),
       clear: () => setItems([]),
       drawerOpen,
       setDrawerOpen,
@@ -102,3 +110,5 @@ export function useCart() {
   if (!value) throw new Error("useCart must be used inside <CartProvider>");
   return value;
 }
+
+export { colorById };
