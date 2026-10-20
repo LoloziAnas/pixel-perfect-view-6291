@@ -69,7 +69,6 @@ function ProductView({ p }: { p: Product }) {
   const { add, setDrawerOpen, startCheckout } = useCart();
   const [qty, setQty] = useState(1);
   const [colorId, setColorId] = useState(p.colors?.[0]?.id);
-  const [size, setSize] = useState(p.sizes?.[0]);
   const [imgIdx, setImgIdx] = useState(0);
   const [name, desc] = p[lang];
 
@@ -156,27 +155,12 @@ function ProductView({ p }: { p: Product }) {
             </div>
           )}
 
-          {p.sizes && (
-            <div className="mt-6">
-              <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                {s.sizeLabel}
+          {p.dims && (
+            <div className="mt-6 rounded-2xl border border-gold/25 bg-cream/60 px-5 py-4">
+              <p className="text-[0.65rem] uppercase tracking-[0.22em] text-gold">
+                {s.dimensions}
               </p>
-              <div className="mt-3 flex flex-wrap gap-3">
-                {p.sizes.map((sz) => (
-                  <button
-                    key={sz}
-                    type="button"
-                    onClick={() => setSize(sz)}
-                    className={`rounded-full border px-5 py-2.5 text-sm transition-colors ${
-                      sz === size
-                        ? "border-rose-deep bg-rose-deep text-primary-foreground"
-                        : "border-gold/40 text-ink hover:border-rose-deep/60"
-                    }`}
-                  >
-                    {sz}
-                  </button>
-                ))}
-              </div>
+              <p className="mt-1.5 font-serif text-lg leading-snug text-ink">{p.dims[lang]}</p>
             </div>
           )}
 
@@ -188,7 +172,7 @@ function ProductView({ p }: { p: Product }) {
             <button
               type="button"
               onClick={() => {
-                add({ slug: p.slug, qty, color: color?.id, size });
+                add({ slug: p.slug, qty, color: color?.id });
                 setDrawerOpen(true);
               }}
               className="btn-ghost !py-4 text-rose-deep"
@@ -198,7 +182,7 @@ function ProductView({ p }: { p: Product }) {
             <button
               type="button"
               onClick={() =>
-                startCheckout([{ slug: p.slug, qty, color: color?.id, size }], false)
+                startCheckout([{ slug: p.slug, qty, color: color?.id }], false)
               }
               className="btn-primary !py-4"
             >
