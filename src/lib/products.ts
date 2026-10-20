@@ -33,7 +33,8 @@ export type Product = {
   fr: [string, string];
   ar: [string, string];
   colors?: ProductColor[];
-  sizes?: string[];
+  // Dimensions shown on the product page and sent with the order.
+  dims?: { fr: string; ar: string };
 };
 
 export const products: Product[] = [
@@ -69,7 +70,10 @@ export const products: Product[] = [
         imgs: [sultanRose1.url, sultanRose2.url],
       },
     ],
-    sizes: ["2m × 1,40m", "2m × 1,60m"],
+    dims: {
+      fr: "220 × 240 cm + 2 taies 50 × 75 cm",
+      ar: "220 × 240 سم + 2 أكياس وسائد 50 × 75 سم",
+    },
   },
   {
     slug: "matelasse-rose",
@@ -117,7 +121,6 @@ export type OrderLine = {
   product: Product;
   qty: number;
   color?: string | undefined;
-  size?: string | undefined;
 };
 export type OrderInfo = {
   name: string;
@@ -137,7 +140,7 @@ export function orderMessage(lines: OrderLine[], info: OrderInfo, id: string) {
     "",
     ...lines.map(
       (l) =>
-        `• ${l.product.fr[0]}${l.color ? ` (${l.color})` : ""}${l.size ? ` — ${l.size}` : ""} × ${l.qty} — ${l.product.price * l.qty} MAD`,
+        `• ${l.product.fr[0]}${l.color ? ` (${l.color})` : ""} × ${l.qty} — ${l.product.price * l.qty} MAD${l.product.dims ? `\\n  ${l.product.dims.fr}` : ""}`,
     ),
     `Total : ${orderTotal(lines)} MAD (livraison gratuite)`,
     "",
