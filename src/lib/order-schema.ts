@@ -23,7 +23,6 @@ export const orderInputSchema = z.object({
         slug: z.string().max(80),
         qty: z.number().int().min(1).max(MAX_QTY),
         color: z.string().max(80).optional(),
-        size: z.string().max(80).optional(),
       }),
     )
     .min(1)

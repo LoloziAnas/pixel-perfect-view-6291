@@ -34,13 +34,13 @@ function useText() {
 const toLines = (items: CartItem[]): OrderLine[] =>
   items.flatMap((i) => {
     const product = productBySlug(i.slug);
-    return product ? [{ product, qty: i.qty, color: i.color, size: i.size }] : [];
+    return product ? [{ slug: product.slug, product, qty: i.qty, color: i.color }] : [];
   });
 
-// Localized color/size summary for a cart or checkout line, e.g. "Rose pêche · 2m × 1,40m".
+// Localized color summary for a cart or checkout line, e.g. "Rose pêche".
 function variantText(line: OrderLine, lang: "fr" | "ar") {
   const color = line.product.colors?.find((c) => c.id === line.color);
-  return [color?.[lang], line.size].filter(Boolean).join(" · ");
+  return [color?.[lang]].filter(Boolean).join(" · ");
 }
 
 export function QtyStepper({
@@ -316,7 +316,7 @@ function OrderForm({ items, fromCart }: { items: CartItem[]; fromCart: boolean }
     try {
       const { id } = await placeOrder({
         data: {
-          items: items.map(({ slug, qty, color, size }) => ({ slug, qty, color, size })),
+          items: items.map(({ slug, qty, color }) => ({ slug, qty, color })),
           customer: r.data,
           lang,
           website: honeypot,

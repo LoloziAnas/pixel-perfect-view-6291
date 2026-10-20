@@ -11,7 +11,7 @@ import { colorById, products } from "@/lib/products";
 
 export const MAX_QTY = 20;
 
-export type CartItem = { slug: string; qty: number; color?: string | undefined; size?: string | undefined };
+export type CartItem = { slug: string; qty: number; color?: string | undefined };
 type Checkout = { items: CartItem[]; fromCart: boolean } | null;
 
 type CartContextValue = {
@@ -30,9 +30,9 @@ type CartContextValue = {
 
 const KEY = "noauma-cart";
 const clamp = (n: number) => Math.min(MAX_QTY, Math.max(1, Math.round(n)));
-// Same product in two colors or sizes is two cart lines.
-export const itemKey = (i: { slug: string; color?: string | undefined; size?: string | undefined }) =>
-  `${i.slug}|${i.color ?? ""}|${i.size ?? ""}`;
+// Same product in two colors is two cart lines.
+export const itemKey = (i: { slug: string; color?: string | undefined }) =>
+  `${i.slug}|${i.color ?? ""}`;
 
 const CartContext = createContext<CartContextValue | null>(null);
 
@@ -49,9 +49,7 @@ function load(): CartItem[] {
         typeof i.color === "string" && p.colors?.some((c) => c.id === i.color)
           ? i.color
           : undefined;
-      const size =
-        typeof i.size === "string" && p.sizes?.includes(i.size) ? i.size : undefined;
-      return [{ slug: i.slug, qty: clamp(i.qty), color, size }];
+      return [{ slug: i.slug, qty: clamp(i.qty), color }];
     });
   } catch {
     return [];

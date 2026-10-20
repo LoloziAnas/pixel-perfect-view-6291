@@ -27,8 +27,7 @@ export const placeOrder = createServerFn({ method: "POST" })
       const product = productBySlug(i.slug);
       if (!product) throw new Error(`Unknown product: ${i.slug}`);
       const color = product.colors?.find((c) => c.id === i.color)?.fr;
-      const size = product.sizes?.includes(i.size ?? "") ? i.size : undefined;
-      return { product, qty: i.qty, color, size };
+      return { slug: product.slug, product, qty: i.qty, color };
     });
 
     const url = process.env["ORDERS_WEBHOOK_URL"];
@@ -52,7 +51,7 @@ export const placeOrder = createServerFn({ method: "POST" })
         itemsText: lines
           .map(
             (l) =>
-              `${l.product.fr[0]}${l.color ? ` (${l.color})` : ""}${l.size ? ` — ${l.size}` : ""} × ${l.qty}`,
+              `${l.product.fr[0]}${l.color ? ` (${l.color})` : ""} × ${l.qty}${l.product.dims ? ` (${l.product.dims.fr})` : ""}`,
           )
           .join("\n"),
         total: orderTotal(lines),
