@@ -10,6 +10,7 @@ import {
   Truck,
   Home,
   MapPin,
+  MessageSquare,
   Minus,
   Phone,
   Plus,
@@ -361,6 +362,7 @@ function OrderForm({ items, fromCart }: { items: CartItem[]; fromCart: boolean }
     { key: "phone", ph: s.phone, icon: Phone, type: "tel", autoComplete: "tel" },
     { key: "address", ph: s.address, icon: Home, autoComplete: "street-address" },
     { key: "city", ph: s.city, icon: MapPin, autoComplete: "address-level2" },
+    { key: "notes", ph: s.notes, icon: MessageSquare, autoComplete: "off" },
   ];
 
   const total = orderTotal(lines);

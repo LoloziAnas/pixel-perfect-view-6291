@@ -3,14 +3,14 @@ import p3 from "@/assets/p3.jpg";
 import p4 from "@/assets/p4.jpg";
 import p5 from "@/assets/p5.jpg";
 import about from "@/assets/about.jpg";
-import sultanPeche1 from "@/assets/sultan-peche-1.jpg.asset.json";
-import sultanPeche2 from "@/assets/sultan-peche-2.jpg.asset.json";
-import sultanCreme1 from "@/assets/sultan-creme-1.jpg.asset.json";
-import sultanCreme2 from "@/assets/sultan-creme-2.jpg.asset.json";
-import sultanBleu1 from "@/assets/sultan-bleu-1.jpg.asset.json";
-import sultanBleu2 from "@/assets/sultan-bleu-2.jpg.asset.json";
-import sultanRose1 from "@/assets/sultan-rose-1.jpg.asset.json";
-import sultanRose2 from "@/assets/sultan-rose-2.jpg.asset.json";
+import sultanPeche1 from "@/assets/sultan-peche-1.jpg";
+import sultanPeche2 from "@/assets/sultan-peche-2.jpg";
+import sultanCreme1 from "@/assets/sultan-creme-1.jpg";
+import sultanCreme2 from "@/assets/sultan-creme-2.jpg";
+import sultanBleu1 from "@/assets/sultan-bleu-1.jpg";
+import sultanBleu2 from "@/assets/sultan-bleu-2.jpg";
+import sultanRose1 from "@/assets/sultan-rose-1.jpg";
+import sultanRose2 from "@/assets/sultan-rose-2.jpg";
 
 // Absolute origin for share previews (og:image must be a full URL).
 export const SITE_URL = "https://www.noauma.ma";
@@ -40,7 +40,7 @@ export type Product = {
 export const products: Product[] = [
   {
     slug: "sultan-velvet",
-    img: sultanPeche2.url,
+    img: sultanPeche2,
     price: 370,
     fr: ["Sultan Velvet", "Couverture velours double face, 3 pièces avec taies."],
     ar: ["سلطان فيلفيت", "بطانية مخمل بوجهين، 3 قطع مع أكياس وسائد."],
@@ -49,25 +49,25 @@ export const products: Product[] = [
         id: "rose-peche",
         fr: "Rose pêche",
         ar: "وردي خوخي",
-        imgs: [sultanPeche1.url, sultanPeche2.url],
+        imgs: [sultanPeche1, sultanPeche2],
       },
       {
         id: "creme-elegant",
         fr: "Crème élégant",
         ar: "كريمي أنيق",
-        imgs: [sultanCreme1.url, sultanCreme2.url],
+        imgs: [sultanCreme1, sultanCreme2],
       },
       {
         id: "bleu-clair",
         fr: "Bleu clair",
         ar: "أزرق فاتح",
-        imgs: [sultanBleu1.url, sultanBleu2.url],
+        imgs: [sultanBleu1, sultanBleu2],
       },
       {
         id: "rose-poudre",
         fr: "Rose poudré",
         ar: "وردي بودرة",
-        imgs: [sultanRose1.url, sultanRose2.url],
+        imgs: [sultanRose1, sultanRose2],
       },
     ],
     dims: {
@@ -141,7 +141,7 @@ export function orderMessage(lines: OrderLine[], info: OrderInfo, id: string) {
     "",
     ...lines.map(
       (l) =>
-        `• ${l.product.fr[0]}${l.color ? ` (${l.color})` : ""} × ${l.qty} — ${l.product.price * l.qty} MAD${l.product.dims ? `\\n  ${l.product.dims.fr}` : ""}`,
+        `• ${l.product.fr[0]}${l.color ? ` (${l.color})` : ""} × ${l.qty} — ${l.product.price * l.qty} MAD${l.product.dims ? `\n  ${l.product.dims.fr}` : ""}`,
     ),
     `Total : ${orderTotal(lines)} MAD (livraison gratuite)`,
     "",
