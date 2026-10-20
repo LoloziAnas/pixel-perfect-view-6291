@@ -44,3 +44,17 @@ Until both are set, checkout shows an error and asks customers to call. To run l
 ```sh
 ORDERS_WEBHOOK_URL=… ORDERS_WEBHOOK_SECRET=… npm run dev
 ```
+
+## Adding or editing products
+
+Go to **www.noauma.ma/admin** and click **Sign In with Token**. On GitHub, create a
+*fine-grained* token: Repository access → **Only select repositories** → this repository,
+permission **Contents: Read and write**, and an expiry date. Paste it in; it is remembered in that
+browser only.
+
+Good to know: renaming a color changes its id, so carts already holding the old color lose it. A
+product with invalid data (e.g. no photo) is hidden from the shop rather than breaking it.
+
+Each product is one JSON file in `src/content/products/` and its photos go in
+`public/images/products/` (converted to WebP on upload). Saving in the admin commits to `main`;
+Vercel redeploys in a few minutes. The editor is configured in `public/admin/config.yml`.

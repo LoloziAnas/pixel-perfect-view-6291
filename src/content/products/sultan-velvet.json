@@ -1,0 +1,38 @@
+{
+  "order": 1,
+  "published": true,
+  "name_fr": "Sultan Velvet",
+  "desc_fr": "Couverture velours double face, 3 pièces avec taies.",
+  "name_ar": "سلطان فيلفيت",
+  "desc_ar": "بطانية مخمل بوجهين، 3 قطع مع أكياس وسائد.",
+  "price": 370,
+  "image": "/images/products/sultan-peche-2.jpg",
+  "colors": [
+    {
+      "name_fr": "Rose pêche",
+      "name_ar": "وردي خوخي",
+      "photo_box": "/images/products/sultan-peche-1.jpg",
+      "photo_scene": "/images/products/sultan-peche-2.jpg"
+    },
+    {
+      "name_fr": "Crème élégant",
+      "name_ar": "كريمي أنيق",
+      "photo_box": "/images/products/sultan-creme-1.jpg",
+      "photo_scene": "/images/products/sultan-creme-2.jpg"
+    },
+    {
+      "name_fr": "Bleu clair",
+      "name_ar": "أزرق فاتح",
+      "photo_box": "/images/products/sultan-bleu-1.jpg",
+      "photo_scene": "/images/products/sultan-bleu-2.jpg"
+    },
+    {
+      "name_fr": "Rose poudré",
+      "name_ar": "وردي بودرة",
+      "photo_box": "/images/products/sultan-rose-1.jpg",
+      "photo_scene": "/images/products/sultan-rose-2.jpg"
+    }
+  ],
+  "dims_fr": "220 × 240 cm + 2 taies 50 × 75 cm",
+  "dims_ar": "220 × 240 سم + 2 أكياس وسائد 50 × 75 سم"
+}

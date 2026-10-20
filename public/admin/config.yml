@@ -1,0 +1,87 @@
+# yaml-language-server: $schema=https://unpkg.com/@sveltia/cms@0.228.0/schema/sveltia-cms.json
+# Admin page at www.noauma.ma/admin/ (Sveltia CMS). Each save is a commit to main;
+# Vercel redeploys the site a few minutes later. Product files are read by src/lib/products.ts.
+backend:
+  name: github
+  repo: LoloziAnas/pixel-perfect-view-6291
+  branch: main
+
+site_url: https://www.noauma.ma
+display_url: https://www.noauma.ma
+
+media_folder: public/images/products
+public_folder: /images/products
+
+media_libraries:
+  default:
+    config:
+      slugify_filename: true
+      # Phone photos are converted to WebP and resized so pages stay fast.
+      transformations:
+        raster_image:
+          format: webp
+          quality: 85
+          width: 2048
+          height: 2048
+
+slug:
+  encoding: ascii
+  clean_accents: true
+
+collections:
+  - name: products
+    label: Produits
+    label_singular: Produit
+    folder: src/content/products
+    format: json
+    extension: json
+    create: true
+    delete: true
+    identifier_field: name_fr
+    # The file name becomes the product's address (/produit/...), set once from the French name.
+    slug: "{{slug}}"
+    preview_path: /produit/{{slug}}
+    summary: "{{name_fr}} — {{price}} MAD"
+    sortable_fields: [order, name_fr, price]
+    fields:
+      - name: name_fr
+        label: Nom (français)
+        widget: string
+        hint: Aussi utilisé pour l'adresse de la page, fixée à la création (ex. « Lin Sable » → /produit/lin-sable).
+      - { name: name_ar, label: Nom (arabe), widget: string }
+      - { name: desc_fr, label: Description (français), widget: text }
+      - { name: desc_ar, label: Description (arabe), widget: text }
+      - { name: price, label: Prix (MAD), widget: number, value_type: int, min: 1 }
+      - name: image
+        label: Photo principale
+        widget: image
+        hint: Photo affichée dans la liste des produits sur la page d'accueil.
+      - name: colors
+        label: Couleurs
+        label_singular: Couleur
+        widget: list
+        required: false
+        hint: Laisser vide si le produit n'existe qu'en une seule couleur.
+        summary: "{{name_fr}}"
+        fields:
+          - { name: name_fr, label: Couleur (français), widget: string }
+          - { name: name_ar, label: Couleur (arabe), widget: string }
+          - { name: photo_box, label: Photo 1 (emballage), widget: image }
+          - { name: photo_scene, label: Photo 2 (dans la chambre), widget: image }
+      - name: dims_fr
+        label: Dimensions (français)
+        widget: string
+        required: false
+        hint: "Ex. : 220 × 240 cm + 2 taies 50 × 75 cm"
+      - { name: dims_ar, label: Dimensions (arabe), widget: string, required: false }
+      - name: order
+        label: Ordre d'affichage
+        widget: number
+        value_type: int
+        default: 100
+        hint: Les plus petits numéros s'affichent en premier.
+      - name: published
+        label: En vente
+        widget: boolean
+        default: true
+        hint: Désactiver pour cacher le produit sans le supprimer.
