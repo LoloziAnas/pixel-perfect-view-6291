@@ -27,7 +27,7 @@ export const placeOrder = createServerFn({ method: "POST" })
       const product = productBySlug(i.slug);
       if (!product) throw new Error(`Unknown product: ${i.slug}`);
       const color = product.colors?.find((c) => c.id === i.color)?.fr;
-      return { product, qty: i.qty, color };
+      return { slug: product.slug, product, qty: i.qty, color };
     });
 
     const url = process.env["ORDERS_WEBHOOK_URL"];

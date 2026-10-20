@@ -34,7 +34,7 @@ function useText() {
 const toLines = (items: CartItem[]): OrderLine[] =>
   items.flatMap((i) => {
     const product = productBySlug(i.slug);
-    return product ? [{ product, qty: i.qty, color: i.color }] : [];
+    return product ? [{ slug: product.slug, product, qty: i.qty, color: i.color }] : [];
   });
 
 // Localized color summary for a cart or checkout line, e.g. "Rose pêche".
