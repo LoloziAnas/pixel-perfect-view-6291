@@ -1,10 +1,13 @@
 {
-  "order": 2,
-  "published": true,
   "name_fr": "Matelassé Rose",
-  "desc_fr": "Coton matelassé, set avec taies.",
   "name_ar": "مبطّن وردي",
+  "desc_fr": "Coton matelassé, set avec taies.",
   "desc_ar": "قطن مبطّن مع أكياس وسائد.",
-  "price": 650,
-  "image": "/images/products/matelasse-rose.jpg"
+  "price": 640,
+  "image": "/images/products/matelasse-rose.jpg",
+  "colors": [],
+  "dims_fr": "",
+  "dims_ar": "",
+  "order": 2,
+  "published": true
 }
