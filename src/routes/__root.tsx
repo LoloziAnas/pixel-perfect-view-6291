@@ -14,7 +14,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SITE_URL } from "../lib/products";
 import { LangProvider } from "../lib/lang";
-import { CartProvider } from "../lib/cart";
+import { CartProvider } from "@/lib/cart";
 import { CartDrawer, CheckoutDialog } from "../components/shop";
 
 function NotFoundComponent() {
