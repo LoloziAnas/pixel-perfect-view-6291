@@ -1,0 +1,20 @@
+{
+  "name_fr": "coussins décoratif",
+  "name_ar": "وسادة ديكور",
+  "desc_fr": "beige claire  \nTaille 42×42\nTissu jacquard haut de gamme\nCoussin rembourré + 10 DH",
+  "desc_ar": "بيج فاتح\nمقاس 42×42\n قماش جاكار عالي الجودة\n وسادة مملوءة + 10 DH",
+  "price": 59,
+  "image": "/images/products/whatsapp-image-2026-11-18-at-9-44-22-pm.webp",
+  "colors": [
+    {
+      "name_fr": "Coussin décoratif Tissu jacquard haut de gamme beige claire",
+      "name_ar": "وسادة زينة، قماش جاكار بيج فاتح عالي الجودة",
+      "photo_box": "/images/products/whatsapp-image-2026-11-15-at-9-13-06-pm-annule-ltiquette.webp",
+      "photo_scene": "/images/products/gemini_generated_image_ht6rxbht6rxbht6r.webp"
+    }
+  ],
+  "dims_fr": "Taille 42×42",
+  "dims_ar": "Taille 42×42",
+  "order": 2,
+  "published": true
+}
