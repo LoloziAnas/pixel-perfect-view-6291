@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useState } from "react";
-import { Banknote, Clock, RefreshCw, ShoppingBag, Truck, Zap } from "lucide-react";
+import { Banknote, Clock, Flame, RefreshCw, ShoppingBag, Truck, Zap } from "lucide-react";
 import { QtyStepper, ShopHeader } from "@/components/shop";
 import { useCart } from "@/lib/cart";
 import { useLang } from "@/lib/lang";
@@ -121,7 +121,13 @@ function ProductView({ p }: { p: Product }) {
         <div className="flex flex-col justify-center">
           <p className="text-[0.65rem] uppercase tracking-[0.25em] text-gold">NOAUMA · Kenitra</p>
           <h1 className="mt-3 text-5xl text-ink md:text-6xl">{name}</h1>
-          <p className="mt-4 font-serif text-3xl text-rose-deep">
+          {p.slug === "sultan-velvet" && (
+            <div className="mt-5 inline-flex w-fit items-center gap-2 rounded-full border border-gold/45 bg-cream/70 px-3.5 py-2 text-[0.65rem] font-medium uppercase tracking-[0.1em] text-rose-deep">
+              <Flame aria-hidden="true" className="h-3.5 w-3.5 text-gold" />
+              <span>Offre Limitée - Réduction de 20%</span>
+            </div>
+          )}
+          <p className="mt-2 font-serif text-3xl text-rose-deep">
             {p.price} {s.mad}
           </p>
           <p className="mt-4 text-muted-foreground">{desc}</p>
